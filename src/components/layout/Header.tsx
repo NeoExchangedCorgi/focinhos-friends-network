@@ -10,18 +10,21 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 import { useTheme } from "@/components/ui/theme-provider"
-import { Link } from "react-router-dom"
+import { useAuth } from "@/contexts/AuthContext"
+import { Link, useNavigate } from "react-router-dom"
 
-interface HeaderProps {
-  userName?: string
-  userAvatar?: string
-}
-
-export function Header({ userName = "Usuário", userAvatar }: HeaderProps) {
+export function Header() {
   const { theme, setTheme } = useTheme()
+  const { user, isAuthenticated, logout } = useAuth()
+  const navigate = useNavigate()
 
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light")
+  }
+
+  const handleLogout = () => {
+    logout()
+    navigate("/login")
   }
 
   return (
@@ -54,71 +57,82 @@ export function Header({ userName = "Usuário", userAvatar }: HeaderProps) {
             <span className="sr-only">Alternar tema</span>
           </Button>
 
-          {/* Notifications */}
-          <Button variant="ghost" size="icon" asChild>
-            <Link to="/notificacoes">
-              <Bell className="h-5 w-5" />
-              <span className="sr-only">Notificações</span>
-            </Link>
-          </Button>
-
-          {/* User Menu */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={userAvatar} alt={userName} />
-                  <AvatarFallback>{userName.charAt(0).toUpperCase()}</AvatarFallback>
-                </Avatar>
+          {isAuthenticated ? (
+            <>
+              {/* Notifications */}
+              <Button variant="ghost" size="icon" asChild>
+                <Link to="/notificacoes">
+                  <Bell className="h-5 w-5" />
+                  <span className="sr-only">Notificações</span>
+                </Link>
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
-              <DropdownMenuItem asChild>
-                <Link to="/perfil" className="cursor-pointer">
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Meu Perfil</span>
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/dados-usuario" className="cursor-pointer">
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Dados do Usuário</span>
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/curtidas" className="cursor-pointer">
-                  <Heart className="mr-2 h-4 w-4" />
-                  <span>Curtidas</span>
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/historico" className="cursor-pointer">
-                  <Clock className="mr-2 h-4 w-4" />
-                  <span>Histórico</span>
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/ocultos" className="cursor-pointer">
-                  <EyeOff className="mr-2 h-4 w-4" />
-                  <span>Ocultos</span>
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link to="/contato-ong" className="cursor-pointer">
-                  <Phone className="mr-2 h-4 w-4" />
-                  <span>Contate a ONG</span>
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link to="/login" className="cursor-pointer text-destructive">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Logout</span>
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+
+              {/* User Menu */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={user?.avatar} alt={user?.name} />
+                      <AvatarFallback>{user?.name?.charAt(0).toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuItem asChild>
+                    <Link to="/perfil" className="cursor-pointer">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Meu Perfil</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/dados-usuario" className="cursor-pointer">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Dados do Usuário</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/curtidas" className="cursor-pointer">
+                      <Heart className="mr-2 h-4 w-4" />
+                      <span>Curtidas</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/historico" className="cursor-pointer">
+                      <Clock className="mr-2 h-4 w-4" />
+                      <span>Histórico</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/ocultos" className="cursor-pointer">
+                      <EyeOff className="mr-2 h-4 w-4" />
+                      <span>Ocultos</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/contato-ong" className="cursor-pointer">
+                      <Phone className="mr-2 h-4 w-4" />
+                      <span>Contate a ONG</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Logout</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          ) : (
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" asChild>
+                <Link to="/login">Login</Link>
+              </Button>
+              <Button size="sm" asChild>
+                <Link to="/cadastro">Cadastrar</Link>
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </header>

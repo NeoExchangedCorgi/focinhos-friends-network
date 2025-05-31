@@ -1,25 +1,67 @@
 
 import { useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { useTheme } from "@/components/ui/theme-provider"
+import { useAuth } from "@/contexts/AuthContext"
+import { Moon, Sun, Home } from "lucide-react"
 
 export default function Login() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const { theme } = useTheme()
+  const { theme, setTheme } = useTheme()
+  const { login } = useAuth()
+  const navigate = useNavigate()
+
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light")
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     console.log("Login:", { email, password })
+    
+    // Simular login bem-sucedido
+    const userData = {
+      id: "1",
+      name: "Usuário Logado",
+      username: "usuario_logado",
+      email: email
+    }
+    
+    login(userData)
+    navigate("/")
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-yellow-400/5 p-4">
+      {/* Botões de navegação no topo */}
+      <div className="absolute top-4 left-4 right-4 flex justify-between">
+        <Button variant="ghost" size="icon" asChild>
+          <Link to="/">
+            <Home className="h-5 w-5" />
+            <span className="sr-only">Voltar ao início</span>
+          </Link>
+        </Button>
+        
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggleTheme}
+        >
+          {theme === "light" ? (
+            <Moon className="h-5 w-5" />
+          ) : (
+            <Sun className="h-5 w-5" />
+          )}
+          <span className="sr-only">Alternar tema</span>
+        </Button>
+      </div>
+
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
