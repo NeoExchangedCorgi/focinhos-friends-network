@@ -1,12 +1,15 @@
 
 import { useAuth } from "@/contexts/AuthContext"
+import { usePosts } from "@/contexts/PostsContext"
+import { PostCard } from "@/components/posts/PostCard"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Link } from "react-router-dom"
 import { EyeOff, UserPlus } from "lucide-react"
 
 export default function Ocultos() {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, user } = useAuth()
+  const { getHiddenPosts, toggleLike, toggleDenounce, hidePost, hideProfile, addToHistory } = usePosts()
 
   if (!isAuthenticated) {
     return (
@@ -42,6 +45,8 @@ export default function Ocultos() {
     )
   }
 
+  const hiddenPosts = user ? getHiddenPosts(user.id) : []
+
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="flex items-center gap-3">
@@ -49,20 +54,37 @@ export default function Ocultos() {
         <h1 className="text-2xl font-bold text-primary">Conteúdo Oculto</h1>
       </div>
       
-      <Card>
-        <CardContent className="text-center py-12">
-          <EyeOff className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">Nenhum conteúdo oculto</h3>
-          <p className="text-muted-foreground mb-4">
-            Postagens e perfis que você ocultar aparecerão aqui, onde você pode escolher exibi-los novamente.
-          </p>
-          <Button asChild>
-            <Link to="/">
-              Ver Feed Principal
-            </Link>
-          </Button>
-        </CardContent>
-      </Card>
+      {hiddenPosts.length === 0 ? (
+        <Card>
+          <CardContent className="text-center py-12">
+            <EyeOff className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Nenhum conteúdo oculto</h3>
+            <p className="text-muted-foreground mb-4">
+              Postagens e perfis que você ocultar aparecerão aqui, onde você pode escolher exibi-los novamente.
+            </p>
+            <Button asChild>
+              <Link to="/">
+                Ver Feed Principal
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-4">
+          {hiddenPosts.map((post) => (
+            <PostCard
+              key={post.id}
+              {...post}
+              isOwner={user?.username === post.author.username}
+              onLike={() => user && toggleLike(post.id, user.id)}
+              onDenounce={() => user && toggleDenounce(post.id, user.id)}
+              onHidePost={() => user && hidePost(post.id, user.id)}
+              onHideProfile={() => user && hideProfile(post.author.username, user.id)}
+              onVisit={() => user && addToHistory(post.id, user.id)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 }

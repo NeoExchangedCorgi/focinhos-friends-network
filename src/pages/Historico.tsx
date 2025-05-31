@@ -1,12 +1,15 @@
 
 import { useAuth } from "@/contexts/AuthContext"
+import { usePosts } from "@/contexts/PostsContext"
+import { PostCard } from "@/components/posts/PostCard"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Link } from "react-router-dom"
 import { Clock, UserPlus } from "lucide-react"
 
 export default function Historico() {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, user } = useAuth()
+  const { getVisitedPosts, toggleLike, toggleDenounce, hidePost, hideProfile, addToHistory } = usePosts()
 
   if (!isAuthenticated) {
     return (
@@ -42,6 +45,8 @@ export default function Historico() {
     )
   }
 
+  const visitedPosts = user ? getVisitedPosts(user.id) : []
+
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="flex items-center gap-3">
@@ -49,20 +54,37 @@ export default function Historico() {
         <h1 className="text-2xl font-bold text-primary">Histórico</h1>
       </div>
       
-      <Card>
-        <CardContent className="text-center py-12">
-          <Clock className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">Nenhuma postagem no histórico</h3>
-          <p className="text-muted-foreground mb-4">
-            Suas postagens visitadas aparecerão aqui conforme você navega pelo feed.
-          </p>
-          <Button asChild>
-            <Link to="/">
-              Ver Feed Principal
-            </Link>
-          </Button>
-        </CardContent>
-      </Card>
+      {visitedPosts.length === 0 ? (
+        <Card>
+          <CardContent className="text-center py-12">
+            <Clock className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Nenhuma postagem no histórico</h3>
+            <p className="text-muted-foreground mb-4">
+              Suas postagens visitadas aparecerão aqui conforme você navega pelo feed.
+            </p>
+            <Button asChild>
+              <Link to="/">
+                Ver Feed Principal
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-4">
+          {visitedPosts.map((post) => (
+            <PostCard
+              key={post.id}
+              {...post}
+              isOwner={user?.username === post.author.username}
+              onLike={() => user && toggleLike(post.id, user.id)}
+              onDenounce={() => user && toggleDenounce(post.id, user.id)}
+              onHidePost={() => user && hidePost(post.id, user.id)}
+              onHideProfile={() => user && hideProfile(post.author.username, user.id)}
+              onVisit={() => user && addToHistory(post.id, user.id)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   )
 }

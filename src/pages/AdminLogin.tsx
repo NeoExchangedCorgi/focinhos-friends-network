@@ -7,9 +7,9 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useTheme } from "@/components/ui/theme-provider"
 import { useAuth } from "@/contexts/AuthContext"
-import { Moon, Sun, Home } from "lucide-react"
+import { Moon, Sun, Home, Shield } from "lucide-react"
 
-export default function Login() {
+export default function AdminLogin() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const { theme, setTheme } = useTheme()
@@ -22,14 +22,15 @@ export default function Login() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("Login:", { email, password })
+    console.log("Admin Login:", { email, password })
     
-    // Simular login bem-sucedido
+    // Simular login de admin bem-sucedido
     const userData = {
-      id: "1",
-      name: "Usuário Logado",
-      username: "usuario_logado",
-      email: email
+      id: "admin1",
+      name: "Admin",
+      username: "admin",
+      email: email,
+      isAdmin: true
     }
     
     login(userData)
@@ -61,25 +62,26 @@ export default function Login() {
         </Button>
       </div>
 
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md border-orange-200">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
-            <img 
-              src={theme === "light" ? "/lovable-uploads/08029b4e-197d-40aa-b9fe-5167c0af94a9.png" : "/lovable-uploads/60e68882-6ee2-4ed6-8618-1abcd3ab462b.png"}
-              alt="Paraíso dos Focinhos"
-              className="h-20 w-20"
-            />
+            <div className="bg-orange-100 p-3 rounded-full">
+              <Shield className="h-8 w-8 text-orange-600" />
+            </div>
           </div>
-          <CardTitle className="text-2xl font-bold text-primary">Login - Pata Amiga</CardTitle>
+          <CardTitle className="text-2xl font-bold text-orange-600">Login Administrativo</CardTitle>
+          <CardDescription>
+            Acesso restrito para administradores
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
+              <Label htmlFor="email">E-mail Administrativo</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="Digite seu e-mail"
+                placeholder="Digite seu e-mail administrativo"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -87,43 +89,26 @@ export default function Login() {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
+              <Label htmlFor="password">Senha Administrativa</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Digite sua senha"
+                placeholder="Digite sua senha administrativa"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
 
-            <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
-              Entrar
+            <Button type="submit" className="w-full bg-orange-600 hover:bg-orange-700">
+              Entrar como Admin
             </Button>
           </form>
 
           <div className="text-center">
-            <Button variant="link" asChild className="text-sm">
-              <Link to="/esqueci-senha">
-                Esqueci minha senha
-              </Link>
-            </Button>
-          </div>
-
-          <div className="text-center">
-            <span className="text-sm text-muted-foreground">Não é cadastrado? </span>
-            <Button variant="link" asChild className="text-sm p-0">
-              <Link to="/cadastro">
-                Clique aqui!
-              </Link>
-            </Button>
-          </div>
-
-          <div className="text-center pt-2">
-            <Button variant="secondary" className="w-full" asChild>
-              <Link to="/admin-login">
-                Fazer login como Admin
+            <Button variant="ghost" asChild className="text-sm">
+              <Link to="/login">
+                Voltar ao login normal
               </Link>
             </Button>
           </div>

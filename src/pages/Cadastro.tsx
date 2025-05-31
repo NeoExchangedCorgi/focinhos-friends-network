@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Eye, EyeOff, RefreshCw, Moon, Sun, Home } from "lucide-react"
@@ -49,13 +50,6 @@ export default function Cadastro() {
     return "Muito forte"
   }
 
-  const getPasswordStrengthColor = (strength: number) => {
-    if (strength < 25) return "bg-red-500"
-    if (strength < 50) return "bg-orange-500"
-    if (strength < 75) return "bg-yellow-500"
-    return "bg-green-500"
-  }
-
   const generateStrongPassword = () => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*"
     let password = ""
@@ -88,7 +82,7 @@ export default function Cadastro() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-yellow-400/5 p-4">
       {/* Botões de navegação no topo */}
-      <div className="absolute top-4 left-4 right-4 flex justify-between">
+      <div className="absolute top-4 right-4 flex gap-2">
         <Button variant="ghost" size="icon" asChild>
           <Link to="/">
             <Home className="h-5 w-5" />
@@ -110,7 +104,7 @@ export default function Cadastro() {
         </Button>
       </div>
 
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-2xl">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
             <img 
@@ -119,137 +113,140 @@ export default function Cadastro() {
               className="h-20 w-20"
             />
           </div>
-          <CardTitle className="text-2xl font-bold text-primary">Cadastro</CardTitle>
-          <CardDescription>
-            Junte-se à nossa comunidade de defensores dos animais
-          </CardDescription>
+          <CardTitle className="text-2xl font-bold text-primary">Cadastro - Pata Amiga</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="fullName">Nome Completo *</Label>
-              <Input
-                id="fullName"
-                placeholder="Seu nome completo"
-                value={formData.fullName}
-                onChange={(e) => handleInputChange("fullName", e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="username">Nome de Usuário *</Label>
-              <Input
-                id="username"
-                placeholder="@seuusuario"
-                value={formData.username}
-                onChange={(e) => handleInputChange("username", e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="phone">Celular *</Label>
-              <Input
-                id="phone"
-                type="tel"
-                placeholder="(11) 99999-9999"
-                value={formData.phone}
-                onChange={(e) => handleInputChange("phone", e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="email">E-mail *</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="seu@email.com"
-                value={formData.email}
-                onChange={(e) => handleInputChange("email", e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Senha *</Label>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={generateStrongPassword}
-                  className="h-auto p-0 text-xs"
-                >
-                  <RefreshCw className="h-3 w-3 mr-1" />
-                  Gerar senha forte
-                </Button>
-              </div>
-              <div className="relative">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="fullName">Nome Completo</Label>
                 <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Sua senha"
-                  value={formData.password}
-                  onChange={(e) => handleInputChange("password", e.target.value)}
+                  id="fullName"
+                  placeholder="Digite seu nome completo"
+                  value={formData.fullName}
+                  onChange={(e) => handleInputChange("fullName", e.target.value)}
                   required
                 />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-0 top-0 h-full px-3"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </Button>
               </div>
-              {formData.password && (
-                <div className="space-y-1">
-                  <Progress 
-                    value={passwordStrength} 
-                    className={`h-2 ${getPasswordStrengthColor(passwordStrength)}`}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Força da senha: {getPasswordStrengthLabel(passwordStrength)}
-                  </p>
+
+              <div className="space-y-2">
+                <Label htmlFor="phone">Celular</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="Digite seu celular"
+                  value={formData.phone}
+                  onChange={(e) => handleInputChange("phone", e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="username">Nome de Usuário</Label>
+                <Input
+                  id="username"
+                  placeholder="Digite seu nome de usuário"
+                  value={formData.username}
+                  onChange={(e) => handleInputChange("username", e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email">E-mail</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Digite seu e-mail"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange("email", e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">Senha</Label>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={generateStrongPassword}
+                    className="h-auto p-0 text-xs"
+                  >
+                    <RefreshCw className="h-3 w-3 mr-1" />
+                    Gerar senha forte
+                  </Button>
                 </div>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirmar Senha *</Label>
-              <div className="relative">
-                <Input
-                  id="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
-                  placeholder="Confirme sua senha"
-                  value={formData.confirmPassword}
-                  onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                  required
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-0 top-0 h-full px-3"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </Button>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Digite sua senha"
+                    value={formData.password}
+                    onChange={(e) => handleInputChange("password", e.target.value)}
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full px-3"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+                {formData.password && (
+                  <div className="space-y-1">
+                    <Progress 
+                      value={passwordStrength} 
+                      className="h-2"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Força da senha: {getPasswordStrengthLabel(passwordStrength)}
+                    </p>
+                  </div>
+                )}
               </div>
-              {formData.confirmPassword && formData.password !== formData.confirmPassword && (
-                <p className="text-xs text-destructive">As senhas não coincidem</p>
-              )}
+
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirmar Senha</Label>
+                <div className="relative">
+                  <Input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="Confirme sua senha"
+                    value={formData.confirmPassword}
+                    onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full px-3"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+                {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+                  <p className="text-xs text-destructive">As senhas não coincidem</p>
+                )}
+              </div>
             </div>
 
             <Button 
@@ -257,14 +254,15 @@ export default function Cadastro() {
               className="w-full bg-primary hover:bg-primary/90"
               disabled={formData.password !== formData.confirmPassword}
             >
-              Criar Conta
+              Cadastrar
             </Button>
           </form>
 
           <div className="text-center">
-            <Button variant="ghost" asChild>
+            <span className="text-sm text-muted-foreground">Possui cadastro? </span>
+            <Button variant="link" asChild className="text-sm p-0">
               <Link to="/login">
-                Já tem conta? Faça login
+                Faça o Login aqui!
               </Link>
             </Button>
           </div>

@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useState, ReactNode } from "react"
+import { createContext, useContext, useState, useEffect, ReactNode } from "react"
 
 interface User {
   id: string
@@ -7,6 +7,7 @@ interface User {
   username: string
   email: string
   avatar?: string
+  isAdmin?: boolean
 }
 
 interface AuthContextType {
@@ -20,6 +21,19 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
+
+  useEffect(() => {
+    // Carregar usuário do localStorage na inicialização
+    const savedUser = localStorage.getItem("pata-amiga-user")
+    if (savedUser) {
+      try {
+        setUser(JSON.parse(savedUser))
+      } catch (error) {
+        console.error("Erro ao carregar usuário salvo:", error)
+        localStorage.removeItem("pata-amiga-user")
+      }
+    }
+  }, [])
 
   const login = (userData: User) => {
     setUser(userData)

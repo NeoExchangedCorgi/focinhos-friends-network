@@ -1,6 +1,6 @@
 
 import { useState } from "react"
-import { Heart, MessageCircle, Flag, MoreHorizontal, MapPin } from "lucide-react"
+import { Heart, MessageCircle, Flag, MoreHorizontal, MapPin, EyeOff, UserX } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -9,6 +9,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { formatDistanceToNow } from "date-fns"
@@ -36,6 +37,9 @@ interface PostCardProps {
   onDenounce?: () => void
   onEdit?: () => void
   onDelete?: () => void
+  onHidePost?: () => void
+  onHideProfile?: () => void
+  onVisit?: () => void
 }
 
 export function PostCard({
@@ -56,9 +60,13 @@ export function PostCard({
   onDenounce,
   onEdit,
   onDelete,
+  onHidePost,
+  onHideProfile,
+  onVisit,
 }: PostCardProps) {
   const [liked, setLiked] = useState(isLiked)
   const [likeCount, setLikeCount] = useState(likes)
+  const [denounced, setDenounced] = useState(isDenounced)
 
   const handleLike = () => {
     if (!isOwner) {
@@ -70,12 +78,17 @@ export function PostCard({
 
   const handleDenounce = () => {
     if (!isOwner) {
+      setDenounced(!denounced)
       onDenounce?.()
     }
   }
 
+  const handleCardClick = () => {
+    onVisit?.()
+  }
+
   return (
-    <Card className="w-full mb-4 hover:shadow-md transition-shadow">
+    <Card className="w-full mb-4 hover:shadow-md transition-shadow cursor-pointer" onClick={handleCardClick}>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -87,7 +100,7 @@ export function PostCard({
               <h3 className="font-semibold text-sm">{author.name}</h3>
               <p className="text-xs text-muted-foreground">@{author.username}</p>
             </div>
-            {isDenounced && (
+            {denounced && (
               <Badge variant="destructive" className="ml-2">
                 Denunciado
               </Badge>
@@ -97,27 +110,47 @@ export function PostCard({
             <span className="text-xs text-muted-foreground">
               {formatDistanceToNow(createdAt, { addSuffix: true, locale: ptBR })}
             </span>
-            {isOwner && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={onEdit}>
-                    Editar
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={onDelete}
-                    className="text-destructive"
-                    disabled={isDenounced}
-                  >
-                    Excluir
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-background border">
+                {isOwner ? (
+                  <>
+                    <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit?.() }}>
+                      Editar
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={(e) => { e.stopPropagation(); onDelete?.() }}
+                      className="text-destructive"
+                      disabled={denounced}
+                    >
+                      Excluir
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem 
+                      onClick={(e) => { e.stopPropagation(); onHidePost?.() }}
+                      className="flex items-center"
+                    >
+                      <EyeOff className="h-4 w-4 mr-2" />
+                      Ocultar este post
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      onClick={(e) => { e.stopPropagation(); onHideProfile?.() }}
+                      className="flex items-center text-orange-600"
+                    >
+                      <UserX className="h-4 w-4 mr-2" />
+                      Ocultar @{author.username}
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </CardHeader>
@@ -152,7 +185,7 @@ export function PostCard({
                 <img
                   src={image}
                   alt={`Imagem ${index + 1}`}
-                  className="w-full h-48 object-cover hover:scale-105 transition-transform cursor-pointer"
+                  className="w-full h-48 object-cover hover:scale-105 transition-transform"
                 />
                 {images.length > 4 && index === 3 && (
                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
@@ -178,7 +211,7 @@ export function PostCard({
         )}
       </CardContent>
 
-      <CardFooter className="pt-2">
+      <CardFooter className="pt-2" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center space-x-4">
             <Button
@@ -210,10 +243,12 @@ export function PostCard({
             size="sm"
             onClick={handleDenounce}
             disabled={isOwner}
-            className="flex items-center space-x-1 hover:text-orange-500"
+            className={`flex items-center space-x-1 ${
+              denounced ? 'text-red-500 hover:text-red-600' : 'hover:text-orange-500'
+            }`}
           >
-            <Flag className="h-4 w-4" />
-            <span className="text-xs">Denunciar</span>
+            <Flag className={`h-4 w-4 ${denounced ? 'fill-current' : ''}`} />
+            <span className="text-xs">{denounced ? 'Denunciado' : 'Denunciar'}</span>
           </Button>
         </div>
       </CardFooter>
