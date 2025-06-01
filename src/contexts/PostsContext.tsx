@@ -74,16 +74,18 @@ export function PostsProvider({ children }: { children: ReactNode }) {
     // Create notification for post author if liked
     if (!isLiked && post.author.username !== userId) {
       const currentUser = JSON.parse(localStorage.getItem("pata-amiga-user") || '{}')
-      notificationsState.addNotification({
-        type: 'like',
-        postId,
-        fromUser: {
-          name: currentUser.name || 'Usuário',
-          username: currentUser.username || userId,
-          avatar: currentUser.avatar
-        },
-        toUserId: post.author.username
-      })
+      if (currentUser.username) {
+        notificationsState.addNotification({
+          type: 'like',
+          postId,
+          fromUser: {
+            name: currentUser.name || 'Usuário',
+            username: currentUser.username,
+            avatar: currentUser.avatar
+          },
+          toUserId: post.author.username
+        })
+      }
     }
   }
 

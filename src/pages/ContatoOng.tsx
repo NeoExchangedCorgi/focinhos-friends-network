@@ -1,5 +1,5 @@
 
-import { Phone, Mail, Facebook, Instagram, MapPin, Clock, Users, Home } from "lucide-react"
+import { Phone, Mail, Facebook, Instagram, Clock, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -106,29 +106,6 @@ export default function ContatoOng() {
           </CardContent>
         </Card>
       </div>
-
-      {/* Location */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <MapPin className="h-5 w-5" />
-            <span>Localização</span>
-          </CardTitle>
-          <CardDescription>
-            Campo Grande, Rio de Janeiro - RJ
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-            <div className="text-center space-y-2">
-              <Home className="h-12 w-12 mx-auto text-muted-foreground" />
-              <p className="text-muted-foreground">
-                Mapa interativo será implementado em breve
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Call to Action */}
       <Card className="bg-primary text-primary-foreground">
