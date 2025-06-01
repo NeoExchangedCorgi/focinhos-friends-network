@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Link } from "react-router-dom"
 import { formatDistanceToNow } from "date-fns"
 import { ptBR } from "date-fns/locale"
 
@@ -40,6 +41,7 @@ interface PostCardProps {
   onHidePost?: () => void
   onHideProfile?: () => void
   onVisit?: () => void
+  hideDropdown?: boolean
 }
 
 export function PostCard({
@@ -63,6 +65,7 @@ export function PostCard({
   onHidePost,
   onHideProfile,
   onVisit,
+  hideDropdown = false,
 }: PostCardProps) {
   const [liked, setLiked] = useState(isLiked)
   const [likeCount, setLikeCount] = useState(likes)
@@ -83,21 +86,32 @@ export function PostCard({
     }
   }
 
-  const handleCardClick = () => {
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Não navegar se clicou em um elemento interativo
+    if ((e.target as HTMLElement).closest('button, a, [role="button"]')) {
+      return
+    }
     onVisit?.()
   }
 
   return (
-    <Card className="w-full mb-4 hover:shadow-md transition-shadow cursor-pointer" onClick={handleCardClick}>
+    <Card className="w-full mb-4 hover:shadow-md transition-shadow">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={author.avatar} alt={author.name} />
-              <AvatarFallback>{author.name.charAt(0).toUpperCase()}</AvatarFallback>
-            </Avatar>
+            <Link to={`/perfil/${author.username}`}>
+              <Avatar className="h-10 w-10">
+                <AvatarImage src={author.avatar} alt={author.name} />
+                <AvatarFallback>{author.name.charAt(0).toUpperCase()}</AvatarFallback>
+              </Avatar>
+            </Link>
             <div>
-              <h3 className="font-semibold text-sm">{author.name}</h3>
+              <Link 
+                to={`/perfil/${author.username}`}
+                className="font-semibold text-sm hover:underline"
+              >
+                {author.name}
+              </Link>
               <p className="text-xs text-muted-foreground">@{author.username}</p>
             </div>
             {denounced && (
@@ -110,108 +124,120 @@ export function PostCard({
             <span className="text-xs text-muted-foreground">
               {formatDistanceToNow(createdAt, { addSuffix: true, locale: ptBR })}
             </span>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-background border">
-                {isOwner ? (
-                  <>
-                    <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit?.() }}>
-                      Editar
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onClick={(e) => { e.stopPropagation(); onDelete?.() }}
-                      className="text-destructive"
-                      disabled={denounced}
-                    >
-                      Excluir
-                    </DropdownMenuItem>
-                  </>
-                ) : (
-                  <>
-                    <DropdownMenuItem 
-                      onClick={(e) => { e.stopPropagation(); onHidePost?.() }}
-                      className="flex items-center"
-                    >
-                      <EyeOff className="h-4 w-4 mr-2" />
-                      Ocultar este post
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem 
-                      onClick={(e) => { e.stopPropagation(); onHideProfile?.() }}
-                      className="flex items-center text-orange-600"
-                    >
-                      <UserX className="h-4 w-4 mr-2" />
-                      Ocultar @{author.username}
-                    </DropdownMenuItem>
-                  </>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {!hideDropdown && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-background border">
+                  {isOwner ? (
+                    <>
+                      <DropdownMenuItem onClick={onEdit}>
+                        Editar
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        onClick={onDelete}
+                        className="text-destructive"
+                        disabled={denounced}
+                      >
+                        Excluir
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem 
+                        onClick={onHidePost}
+                        className="flex items-center"
+                      >
+                        <EyeOff className="h-4 w-4 mr-2" />
+                        Ocultar este post
+                      </DropdownMenuItem>
+                    </>
+                  ) : (
+                    <>
+                      <DropdownMenuItem 
+                        onClick={onHidePost}
+                        className="flex items-center"
+                      >
+                        <EyeOff className="h-4 w-4 mr-2" />
+                        Ocultar este post
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem 
+                        onClick={onHideProfile}
+                        className="flex items-center text-orange-600"
+                      >
+                        <UserX className="h-4 w-4 mr-2" />
+                        Ocultar @{author.username}
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="py-2">
-        {/* Content */}
-        <p className="text-sm mb-3 whitespace-pre-wrap">{content}</p>
+      <Link to={`/post/${id}`} className="block" onClick={handleCardClick}>
+        <CardContent className="py-2 cursor-pointer">
+          {/* Content */}
+          <p className="text-sm mb-3 whitespace-pre-wrap">{content}</p>
 
-        {/* Location */}
-        {location && (
-          <div className="flex items-center text-xs text-muted-foreground mb-3">
-            <MapPin className="h-3 w-3 mr-1" />
-            {location}
-          </div>
-        )}
+          {/* Location */}
+          {location && (
+            <div className="flex items-center text-xs text-muted-foreground mb-3">
+              <MapPin className="h-3 w-3 mr-1" />
+              {location}
+            </div>
+          )}
 
-        {/* Images */}
-        {images.length > 0 && (
-          <div className={`grid gap-2 mb-3 ${
-            images.length === 1 ? 'grid-cols-1' : 
-            images.length === 2 ? 'grid-cols-2' :
-            images.length === 3 ? 'grid-cols-2' :
-            'grid-cols-2'
-          }`}>
-            {images.slice(0, 4).map((image, index) => (
-              <div 
-                key={index} 
-                className={`relative overflow-hidden rounded-lg ${
-                  images.length === 3 && index === 0 ? 'col-span-2' : ''
-                }`}
-              >
-                <img
-                  src={image}
-                  alt={`Imagem ${index + 1}`}
-                  className="w-full h-48 object-cover hover:scale-105 transition-transform"
-                />
-                {images.length > 4 && index === 3 && (
-                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <span className="text-white font-semibold">
-                      +{images.length - 4} fotos
-                    </span>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+          {/* Images */}
+          {images.length > 0 && (
+            <div className={`grid gap-2 mb-3 ${
+              images.length === 1 ? 'grid-cols-1' : 
+              images.length === 2 ? 'grid-cols-2' :
+              images.length === 3 ? 'grid-cols-2' :
+              'grid-cols-2'
+            }`}>
+              {images.slice(0, 4).map((image, index) => (
+                <div 
+                  key={index} 
+                  className={`relative overflow-hidden rounded-lg ${
+                    images.length === 3 && index === 0 ? 'col-span-2' : ''
+                  }`}
+                >
+                  <img
+                    src={image}
+                    alt={`Imagem ${index + 1}`}
+                    className="w-full h-48 object-cover hover:scale-105 transition-transform"
+                  />
+                  {images.length > 4 && index === 3 && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                      <span className="text-white font-semibold">
+                        +{images.length - 4} fotos
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
 
-        {/* Video */}
-        {video && (
-          <div className="mb-3">
-            <video
-              src={video}
-              controls
-              className="w-full rounded-lg max-h-80"
-            />
-          </div>
-        )}
-      </CardContent>
+          {/* Video */}
+          {video && (
+            <div className="mb-3">
+              <video
+                src={video}
+                controls
+                className="w-full rounded-lg max-h-80"
+              />
+            </div>
+          )}
+        </CardContent>
+      </Link>
 
-      <CardFooter className="pt-2" onClick={(e) => e.stopPropagation()}>
+      <CardFooter className="pt-2">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center space-x-4">
             <Button
@@ -230,11 +256,13 @@ export function PostCard({
             <Button
               variant="ghost"
               size="sm"
-              onClick={onComment}
+              asChild
               className="flex items-center space-x-1 hover:text-blue-500"
             >
-              <MessageCircle className="h-4 w-4" />
-              <span className="text-xs">{comments}</span>
+              <Link to={`/post/${id}`}>
+                <MessageCircle className="h-4 w-4" />
+                <span className="text-xs">{comments}</span>
+              </Link>
             </Button>
           </div>
 

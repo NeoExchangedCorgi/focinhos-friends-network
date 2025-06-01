@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -22,6 +21,7 @@ import DadosUsuario from "./pages/DadosUsuario";
 import NovaPostagem from "./pages/NovaPostagem";
 import Notificacoes from "./pages/Notificacoes";
 import NotFound from "./pages/NotFound";
+import PostDetail from "./pages/PostDetail";
 
 const queryClient = new QueryClient();
 
@@ -40,16 +40,16 @@ const App = () => (
                 <Route path="/esqueci-senha" element={<EsqueciSenha />} />
                 <Route path="/admin-login" element={<AdminLogin />} />
                 <Route path="/" element={<Layout><Home /></Layout>} />
-                <Route path="/mais-curtidos" element={<Layout><Home /></Layout>} />
-                <Route path="/denunciados" element={<Layout><Home /></Layout>} />
                 <Route path="/curtidas" element={<Layout><Curtidas /></Layout>} />
                 <Route path="/historico" element={<Layout><Historico /></Layout>} />
                 <Route path="/ocultos" element={<Layout><Ocultos /></Layout>} />
                 <Route path="/contato-ong" element={<Layout><ContatoOng /></Layout>} />
                 <Route path="/perfil" element={<Layout><Perfil /></Layout>} />
+                <Route path="/perfil/:username" element={<Layout><Perfil /></Layout>} />
                 <Route path="/dados-usuario" element={<Layout><DadosUsuario /></Layout>} />
                 <Route path="/notificacoes" element={<Layout><Notificacoes /></Layout>} />
                 <Route path="/nova-postagem" element={<Layout><NovaPostagem /></Layout>} />
+                <Route path="/post/:postId" element={<Layout><PostDetail /></Layout>} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

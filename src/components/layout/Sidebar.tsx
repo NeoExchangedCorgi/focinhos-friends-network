@@ -1,14 +1,11 @@
 
-import { Home, TrendingUp, Flag, Heart, Clock, EyeOff, Phone, LogOut } from "lucide-react"
+import { Home, Heart, Clock, EyeOff, Phone, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
 import { Link, useLocation } from "react-router-dom"
 import { cn } from "@/lib/utils"
 
 const navigationItems = [
   { icon: Home, label: "Home", href: "/" },
-  { icon: TrendingUp, label: "Mais Curtidos", href: "/mais-curtidos" },
-  { icon: Flag, label: "Denunciados", href: "/denunciados" },
   { icon: Heart, label: "Curtidas", href: "/curtidas" },
   { icon: Clock, label: "Histórico", href: "/historico" },
   { icon: EyeOff, label: "Ocultos", href: "/ocultos" },
