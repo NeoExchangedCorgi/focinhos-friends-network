@@ -20,6 +20,18 @@ export const useCommentsState = () => {
     return newComment
   }
 
+  const editComment = (commentId: string, content: string) => {
+    console.log("Editing comment:", commentId)
+    setComments(prev => prev.map(comment => 
+      comment.id === commentId ? { ...comment, content } : comment
+    ))
+  }
+
+  const deleteComment = (commentId: string) => {
+    console.log("Deleting comment:", commentId)
+    setComments(prev => prev.filter(comment => comment.id !== commentId))
+  }
+
   const toggleCommentLike = (commentId: string, userId: string) => {
     setComments(prev => prev.map(comment => {
       if (comment.id === commentId) {
@@ -54,6 +66,8 @@ export const useCommentsState = () => {
     comments,
     setComments,
     addComment,
+    editComment,
+    deleteComment,
     toggleCommentLike,
     getPostComments,
     deleteCommentsByPostId,

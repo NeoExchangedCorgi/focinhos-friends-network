@@ -38,14 +38,17 @@ export default function PostDetail() {
     )
   }
 
+  const isPostDenounced = post.denouncedBy.length > 0
+  const canLike = !!user && user.username !== post.author.username && !isPostDenounced
+
   const handleLike = () => {
-    if (user) {
+    if (user && canLike) {
       toggleLike(post.id, user.id)
     }
   }
 
   const handleCommentSubmit = (content: string) => {
-    if (user) {
+    if (user && !isPostDenounced) {
       addComment(postId, content, {
         name: user.name,
         username: user.username,
@@ -55,7 +58,7 @@ export default function PostDetail() {
   }
 
   const handleCommentLike = (commentId: string) => {
-    if (user) {
+    if (user && !isPostDenounced) {
       toggleCommentLike(commentId, user.id)
     }
   }
@@ -68,11 +71,15 @@ export default function PostDetail() {
         post={post}
         isLiked={post.likedBy.includes(user?.id || "")}
         onLike={handleLike}
-        canLike={!!user && user.username !== post.author.username}
+        canLike={canLike}
       />
 
       {isAuthenticated && user ? (
-        <CommentForm user={user} onSubmit={handleCommentSubmit} />
+        <CommentForm 
+          user={user} 
+          isPostDenounced={isPostDenounced}
+          onSubmit={handleCommentSubmit} 
+        />
       ) : (
         <UnauthenticatedComment />
       )}
@@ -85,6 +92,8 @@ export default function PostDetail() {
         <CommentsList
           comments={comments}
           user={user}
+          postId={postId}
+          isPostDenounced={isPostDenounced}
           onToggleLike={handleCommentLike}
         />
       </div>

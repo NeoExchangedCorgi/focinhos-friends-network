@@ -37,6 +37,19 @@ export const usePostsState = () => {
     ))
   }
 
+  const editPost = (postId: string, content: string, images: string[] = [], video?: string, location?: string) => {
+    console.log("Editing post:", postId)
+    setPosts(prev => prev.map(post => 
+      post.id === postId ? { 
+        ...post, 
+        content, 
+        images, 
+        video, 
+        location 
+      } : post
+    ))
+  }
+
   const getPostById = (postId: string): Post | undefined => {
     return posts.find(post => post.id === postId)
   }
@@ -47,6 +60,7 @@ export const usePostsState = () => {
     addPost,
     deletePost,
     updatePost,
+    editPost,
     getPostById
   }
 }

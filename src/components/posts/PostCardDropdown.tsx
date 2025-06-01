@@ -7,7 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, EyeOff, UserX, Trash2 } from "lucide-react"
+import { MoreHorizontal, EyeOff, UserX, Trash2, Edit } from "lucide-react"
 
 interface PostCardDropdownProps {
   isOwner: boolean
@@ -42,7 +42,12 @@ export function PostCardDropdown({
       <DropdownMenuContent align="end" className="bg-background border">
         {isOwner ? (
           <>
-            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit?.() }}>
+            <DropdownMenuItem 
+              onClick={(e) => { e.stopPropagation(); onEdit?.() }}
+              disabled={isDenounced}
+              className="flex items-center"
+            >
+              <Edit className="h-4 w-4 mr-2" />
               Editar
             </DropdownMenuItem>
             <DropdownMenuItem 
@@ -50,6 +55,7 @@ export function PostCardDropdown({
               className="text-destructive"
               disabled={isDenounced}
             >
+              <Trash2 className="h-4 w-4 mr-2" />
               Excluir
             </DropdownMenuItem>
             <DropdownMenuSeparator />
@@ -81,7 +87,7 @@ export function PostCardDropdown({
           </>
         )}
         
-        {isAdmin && !isOwner && (
+        {isAdmin && (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuItem 

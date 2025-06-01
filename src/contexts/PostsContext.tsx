@@ -1,4 +1,3 @@
-
 import { createContext, useContext, ReactNode } from "react"
 import { Post, Comment, Notification } from "@/types/posts"
 import { usePostsState } from "@/hooks/usePosts"
@@ -17,7 +16,10 @@ interface PostsContextType {
   comments: Comment[]
   notifications: Notification[]
   addPost: (post: Omit<Post, 'id' | 'createdAt' | 'likes' | 'comments' | 'likedBy' | 'denouncedBy'>) => void
+  editPost: (postId: string, content: string, images?: string[], video?: string, location?: string) => void
   addComment: (postId: string, content: string, author: { name: string; username: string; avatar?: string }) => void
+  editComment: (commentId: string, content: string) => void
+  deleteComment: (commentId: string) => void
   toggleLike: (postId: string, userId: string) => void
   toggleCommentLike: (commentId: string, userId: string) => void
   toggleDenounce: (postId: string, userId: string) => void
@@ -54,6 +56,12 @@ export function PostsProvider({ children }: { children: ReactNode }) {
     console.log("Toggling like for post:", postId, "user:", userId)
     const post = postsState.getPostById(postId)
     if (!post) return
+
+    // Check if post is denounced - if so, don't allow likes
+    if (post.denouncedBy.length > 0) {
+      console.log("Cannot like denounced post")
+      return
+    }
 
     const isLiked = post.likedBy.includes(userId)
     const updatedPost = {
@@ -109,10 +117,17 @@ export function PostsProvider({ children }: { children: ReactNode }) {
 
   const addComment = (postId: string, content: string, author: { name: string; username: string; avatar?: string }) => {
     console.log("Adding comment to post:", postId, "content:", content)
+    
+    // Check if post is denounced - if so, don't allow comments
+    const post = postsState.getPostById(postId)
+    if (post && post.denouncedBy.length > 0) {
+      console.log("Cannot comment on denounced post")
+      return
+    }
+
     const newComment = commentsState.addComment(postId, content, author)
     
     // Update post comment count
-    const post = postsState.getPostById(postId)
     if (post) {
       postsState.updatePost(postId, { comments: post.comments + 1 })
     }
@@ -128,6 +143,52 @@ export function PostsProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const editComment = (commentId: string, content: string) => {
+    const comment = commentsState.comments.find(c => c.id === commentId)
+    if (!comment) return
+
+    // Check if the post is denounced - if so, don't allow editing
+    const post = postsState.getPostById(comment.postId)
+    if (post && post.denouncedBy.length > 0) {
+      console.log("Cannot edit comment on denounced post")
+      return
+    }
+
+    commentsState.editComment(commentId, content)
+  }
+
+  const deleteComment = (commentId: string) => {
+    const comment = commentsState.comments.find(c => c.id === commentId)
+    if (!comment) return
+
+    // Check if the post is denounced - if so, don't allow deletion
+    const post = postsState.getPostById(comment.postId)
+    if (post && post.denouncedBy.length > 0) {
+      console.log("Cannot delete comment on denounced post")
+      return
+    }
+
+    commentsState.deleteComment(commentId)
+    
+    // Update post comment count
+    if (post) {
+      postsState.updatePost(comment.postId, { comments: Math.max(0, post.comments - 1) })
+    }
+  }
+
+  const editPost = (postId: string, content: string, images: string[] = [], video?: string, location?: string) => {
+    const post = postsState.getPostById(postId)
+    if (!post) return
+
+    // Check if post is denounced - if so, don't allow editing
+    if (post.denouncedBy.length > 0) {
+      console.log("Cannot edit denounced post")
+      return
+    }
+
+    postsState.editPost(postId, content, images, video, location)
+  }
+
   const getFilteredPosts = (filter: 'recent' | 'liked' | 'denounced', userId?: string) => {
     console.log("Getting filtered posts:", filter, "for user:", userId)
     let filteredPosts = postsState.posts
@@ -136,14 +197,17 @@ export function PostsProvider({ children }: { children: ReactNode }) {
       const userHiddenPosts = userState.getHiddenPosts(userId)
       const userHiddenProfiles = userState.getHiddenProfiles(userId)
       
+      // For denounced filter, show all denounced posts (including hidden ones)
+      if (filter === 'denounced') {
+        return filteredPosts.filter(post => userId && post.denouncedBy.includes(userId))
+      }
+
       filteredPosts = filterVisiblePosts(postsState.posts, userId, userHiddenPosts, userHiddenProfiles)
     }
 
     switch (filter) {
       case 'liked':
         return sortPostsByLikes(filterPostsWithoutDenounced(filteredPosts, userId))
-      case 'denounced':
-        return filteredPosts.filter(post => userId && post.denouncedBy.includes(userId))
       case 'recent':
       default:
         return sortPostsByDate(filterPostsWithoutDenounced(filteredPosts, userId))
@@ -193,7 +257,10 @@ export function PostsProvider({ children }: { children: ReactNode }) {
       comments: commentsState.comments,
       notifications: notificationsState.notifications,
       addPost: postsState.addPost,
+      editPost,
       addComment,
+      editComment,
+      deleteComment,
       toggleLike,
       toggleCommentLike: commentsState.toggleCommentLike,
       toggleDenounce,

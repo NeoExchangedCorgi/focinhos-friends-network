@@ -9,18 +9,31 @@ import { User } from "@/types/auth"
 
 interface CommentFormProps {
   user: User
+  isPostDenounced: boolean
   onSubmit: (content: string) => void
 }
 
-export function CommentForm({ user, onSubmit }: CommentFormProps) {
+export function CommentForm({ user, isPostDenounced, onSubmit }: CommentFormProps) {
   const [commentContent, setCommentContent] = useState("")
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!commentContent.trim()) return
+    if (!commentContent.trim() || isPostDenounced) return
 
     onSubmit(commentContent)
     setCommentContent("")
+  }
+
+  if (isPostDenounced) {
+    return (
+      <Card>
+        <CardContent className="p-4 text-center">
+          <p className="text-muted-foreground">
+            Comentários não são permitidos em posts denunciados.
+          </p>
+        </CardContent>
+      </Card>
+    )
   }
 
   return (
