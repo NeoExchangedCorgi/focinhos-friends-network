@@ -56,8 +56,8 @@ export default function Ocultos() {
     )
   }
 
-  const hiddenPosts = user ? getHiddenPosts(user.username) : []
-  const hiddenProfiles = user ? getHiddenProfiles(user.username) : []
+  const hiddenPosts = user ? getHiddenPosts(user.id) : []
+  const hiddenProfiles = user ? getHiddenProfiles(user.id) : []
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
@@ -95,17 +95,17 @@ export default function Ocultos() {
                   <PostCard
                     {...post}
                     isOwner={user?.username === post.author.username}
-                    onLike={() => user && toggleLike(post.id, user.username)}
-                    onDenounce={() => user && toggleDenounce(post.id, user.username)}
-                    onHidePost={() => user && hidePost(post.id, user.username)}
-                    onHideProfile={() => user && hideProfile(post.author.username, user.username)}
-                    onVisit={() => user && addToHistory(post.id, user.username)}
+                    onLike={() => user && toggleLike(post.id, user.id)}
+                    onDenounce={() => user && toggleDenounce(post.id, user.id)}
+                    onHidePost={() => user && hidePost(post.id, user.id)}
+                    onHideProfile={() => user && hideProfile(post.author.username, user.id)}
+                    onVisit={() => user && addToHistory(post.id, user.id)}
                   />
                   <div className="absolute top-2 right-2">
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => user && unhidePost(post.id, user.username)}
+                      onClick={() => user && unhidePost(post.id, user.id)}
                       className="bg-background/90 backdrop-blur"
                     >
                       <Eye className="h-4 w-4 mr-2" />
@@ -152,7 +152,7 @@ export default function Ocultos() {
                     </div>
                     <Button
                       variant="outline"
-                      onClick={() => user && unhideProfile(username, user.username)}
+                      onClick={() => user && unhideProfile(username, user.id)}
                     >
                       <Eye className="h-4 w-4 mr-2" />
                       Reexibir

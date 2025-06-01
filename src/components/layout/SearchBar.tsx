@@ -5,44 +5,19 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useNavigate } from "react-router-dom"
-
-// Mock users data - in a real app, this would come from an API
-const mockUsers = [
-  {
-    id: "1",
-    name: "Ana Silva",
-    username: "ana_silva",
-    avatar: undefined
-  },
-  {
-    id: "2", 
-    name: "Carlos Santos",
-    username: "carlos_santos",
-    avatar: undefined
-  },
-  {
-    id: "3",
-    name: "Maria Oliveira", 
-    username: "maria_oliveira",
-    avatar: undefined
-  },
-  {
-    id: "4",
-    name: "João Pereira",
-    username: "joao_pereira", 
-    avatar: undefined
-  }
-]
+import { useAuth } from "@/contexts/AuthContext"
 
 export function SearchBar() {
   const [searchTerm, setSearchTerm] = useState("")
-  const [searchResults, setSearchResults] = useState<typeof mockUsers>([])
+  const [searchResults, setSearchResults] = useState<any[]>([])
   const [showResults, setShowResults] = useState(false)
   const navigate = useNavigate()
+  const { getRegisteredUsers } = useAuth()
 
   useEffect(() => {
     if (searchTerm.trim()) {
-      const results = mockUsers.filter(user => 
+      const allUsers = getRegisteredUsers()
+      const results = allUsers.filter(user => 
         user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.username.toLowerCase().includes(searchTerm.toLowerCase())
       )
@@ -52,7 +27,7 @@ export function SearchBar() {
       setSearchResults([])
       setShowResults(false)
     }
-  }, [searchTerm])
+  }, [searchTerm, getRegisteredUsers])
 
   const handleUserClick = (username: string) => {
     navigate(`/perfil/${username}`)

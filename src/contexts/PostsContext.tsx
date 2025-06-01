@@ -199,7 +199,7 @@ export function PostsProvider({ children }: { children: ReactNode }) {
       
       // For denounced filter, show all denounced posts (including hidden ones)
       if (filter === 'denounced') {
-        return filteredPosts.filter(post => userId && post.denouncedBy.includes(userId))
+        return filteredPosts.filter(post => post.denouncedBy.includes(userId))
       }
 
       filteredPosts = filterVisiblePosts(postsState.posts, userId, userHiddenPosts, userHiddenProfiles)

@@ -7,6 +7,7 @@ export const useUserState = () => {
   const [visitHistory, setVisitHistory] = useState<Record<string, string[]>>({})
 
   const hidePost = (postId: string, userId: string) => {
+    console.log("Hiding post:", postId, "for user:", userId)
     setHiddenPosts(prev => ({
       ...prev,
       [userId]: [...(prev[userId] || []), postId]
@@ -14,6 +15,7 @@ export const useUserState = () => {
   }
 
   const unhidePost = (postId: string, userId: string) => {
+    console.log("Unhiding post:", postId, "for user:", userId)
     setHiddenPosts(prev => ({
       ...prev,
       [userId]: (prev[userId] || []).filter(id => id !== postId)
@@ -21,6 +23,7 @@ export const useUserState = () => {
   }
 
   const hideProfile = (username: string, userId: string) => {
+    console.log("Hiding profile:", username, "for user:", userId)
     setHiddenProfiles(prev => ({
       ...prev,
       [userId]: [...(prev[userId] || []), username]
@@ -28,6 +31,7 @@ export const useUserState = () => {
   }
 
   const unhideProfile = (username: string, userId: string) => {
+    console.log("Unhiding profile:", username, "for user:", userId)
     setHiddenProfiles(prev => ({
       ...prev,
       [userId]: (prev[userId] || []).filter(u => u !== username)
