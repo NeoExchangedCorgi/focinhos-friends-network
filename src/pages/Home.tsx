@@ -52,7 +52,7 @@ export default function Home() {
     setSearchParams({ tab: value })
   }
 
-  const posts = getFilteredPosts(currentTab as 'recent' | 'liked' | 'denounced', user?.id)
+  const posts = getFilteredPosts(currentTab as 'recent' | 'liked' | 'denounced', user?.username)
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
@@ -108,11 +108,11 @@ export default function Home() {
                 key={post.id}
                 {...post}
                 isOwner={user?.username === post.author.username}
-                onLike={() => user && toggleLike(post.id, user.id)}
-                onDenounce={() => user && toggleDenounce(post.id, user.id)}
-                onHidePost={() => user && hidePost(post.id, user.id)}
-                onHideProfile={() => user && hideProfile(post.author.username, user.id)}
-                onVisit={() => user && addToHistory(post.id, user.id)}
+                onLike={() => user && toggleLike(post.id, user.username)}
+                onDenounce={() => user && toggleDenounce(post.id, user.username)}
+                onHidePost={() => user && hidePost(post.id, user.username)}
+                onHideProfile={() => user && hideProfile(post.author.username, user.username)}
+                onVisit={() => user && addToHistory(post.id, user.username)}
               />
             ))
           )}
@@ -135,11 +135,11 @@ export default function Home() {
                 key={post.id}
                 {...post}
                 isOwner={user?.username === post.author.username}
-                onLike={() => user && toggleLike(post.id, user.id)}
-                onDenounce={() => user && toggleDenounce(post.id, user.id)}
-                onHidePost={() => user && hidePost(post.id, user.id)}
-                onHideProfile={() => user && hideProfile(post.author.username, user.id)}
-                onVisit={() => user && addToHistory(post.id, user.id)}
+                onLike={() => user && toggleLike(post.id, user.username)}
+                onDenounce={() => user && toggleDenounce(post.id, user.username)}
+                onHidePost={() => user && hidePost(post.id, user.username)}
+                onHideProfile={() => user && hideProfile(post.author.username, user.username)}
+                onVisit={() => user && addToHistory(post.id, user.username)}
               />
             ))
           )}
@@ -162,11 +162,11 @@ export default function Home() {
                 key={post.id}
                 {...post}
                 isOwner={user?.username === post.author.username}
-                onLike={() => user && toggleLike(post.id, user.id)}
-                onDenounce={() => user && toggleDenounce(post.id, user.id)}
-                onHidePost={() => user && hidePost(post.id, user.id)}
-                onHideProfile={() => user && hideProfile(post.author.username, user.id)}
-                onVisit={() => user && addToHistory(post.id, user.id)}
+                onLike={() => user && toggleLike(post.id, user.username)}
+                onDenounce={() => user && toggleDenounce(post.id, user.username)}
+                onHidePost={() => user && hidePost(post.id, user.username)}
+                onHideProfile={() => user && hideProfile(post.author.username, user.username)}
+                onVisit={() => user && addToHistory(post.id, user.username)}
               />
             ))
           )}

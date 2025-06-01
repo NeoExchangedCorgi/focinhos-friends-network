@@ -11,11 +11,14 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useTheme } from "@/components/ui/theme-provider"
 import { useAuth } from "@/contexts/AuthContext"
+import { usePosts } from "@/contexts/PostsContext"
 import { Link, useNavigate } from "react-router-dom"
+import { cn } from "@/lib/utils"
 
 export function Header() {
   const { theme, setTheme } = useTheme()
   const { user, isAuthenticated, logout } = useAuth()
+  const { hasUnreadNotifications } = usePosts()
   const navigate = useNavigate()
 
   const toggleTheme = () => {
@@ -27,6 +30,8 @@ export function Header() {
     navigate("/login")
   }
 
+  const hasUnread = user ? hasUnreadNotifications(user.username) : false
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between px-4">
@@ -35,7 +40,7 @@ export function Header() {
           <img 
             src={theme === "light" ? "/lovable-uploads/08029b4e-197d-40aa-b9fe-5167c0af94a9.png" : "/lovable-uploads/60e68882-6ee2-4ed6-8618-1abcd3ab462b.png"}
             alt="Paraíso dos Focinhos"
-            className="h-10 w-10"
+            className="h-12 w-auto"
           />
           <span className="text-xl font-bold text-primary">Pata Amiga</span>
         </Link>
@@ -60,9 +65,12 @@ export function Header() {
           {isAuthenticated ? (
             <>
               {/* Notifications */}
-              <Button variant="ghost" size="icon" asChild>
+              <Button variant="ghost" size="icon" asChild className="relative">
                 <Link to="/notificacoes">
-                  <Bell className="h-5 w-5" />
+                  <Bell className={cn("h-5 w-5", hasUnread && "animate-bounce")} />
+                  {hasUnread && (
+                    <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full animate-pulse" />
+                  )}
                   <span className="sr-only">Notificações</span>
                 </Link>
               </Button>
@@ -77,7 +85,7 @@ export function Header() {
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
+                <DropdownMenuContent className="w-56 bg-background border" align="end" forceMount>
                   <DropdownMenuItem asChild>
                     <Link to="/perfil" className="cursor-pointer">
                       <User className="mr-2 h-4 w-4" />

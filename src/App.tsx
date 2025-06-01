@@ -21,6 +21,7 @@ import Perfil from "./pages/Perfil";
 import DadosUsuario from "./pages/DadosUsuario";
 import NovaPostagem from "./pages/NovaPostagem";
 import Notificacoes from "./pages/Notificacoes";
+import PostDetail from "./pages/PostDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,17 +41,16 @@ const App = () => (
                 <Route path="/esqueci-senha" element={<EsqueciSenha />} />
                 <Route path="/admin-login" element={<AdminLogin />} />
                 <Route path="/" element={<Layout><Home /></Layout>} />
-                <Route path="/mais-curtidos" element={<Layout><Home /></Layout>} />
-                <Route path="/denunciados" element={<Layout><Home /></Layout>} />
                 <Route path="/curtidas" element={<Layout><Curtidas /></Layout>} />
                 <Route path="/historico" element={<Layout><Historico /></Layout>} />
                 <Route path="/ocultos" element={<Layout><Ocultos /></Layout>} />
                 <Route path="/contato-ong" element={<Layout><ContatoOng /></Layout>} />
                 <Route path="/perfil" element={<Layout><Perfil /></Layout>} />
+                <Route path="/perfil/:username" element={<Layout><Perfil /></Layout>} />
                 <Route path="/dados-usuario" element={<Layout><DadosUsuario /></Layout>} />
                 <Route path="/notificacoes" element={<Layout><Notificacoes /></Layout>} />
                 <Route path="/nova-postagem" element={<Layout><NovaPostagem /></Layout>} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="/post/:postId" element={<Layout><PostDetail /></Layout>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>

@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { formatDistanceToNow } from "date-fns"
 import { ptBR } from "date-fns/locale"
+import { Link, useNavigate } from "react-router-dom"
 
 interface PostCardProps {
   id: string
@@ -67,6 +68,7 @@ export function PostCard({
   const [liked, setLiked] = useState(isLiked)
   const [likeCount, setLikeCount] = useState(likes)
   const [denounced, setDenounced] = useState(isDenounced)
+  const navigate = useNavigate()
 
   const handleLike = () => {
     if (!isOwner) {
@@ -85,6 +87,12 @@ export function PostCard({
 
   const handleCardClick = () => {
     onVisit?.()
+    navigate(`/post/${id}`)
+  }
+
+  const handleAuthorClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    navigate(`/perfil/${author.username}`)
   }
 
   return (
@@ -92,12 +100,17 @@ export function PostCard({
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <Avatar className="h-10 w-10">
+            <Avatar className="h-10 w-10 cursor-pointer" onClick={handleAuthorClick}>
               <AvatarImage src={author.avatar} alt={author.name} />
               <AvatarFallback>{author.name.charAt(0).toUpperCase()}</AvatarFallback>
             </Avatar>
             <div>
-              <h3 className="font-semibold text-sm">{author.name}</h3>
+              <h3 
+                className="font-semibold text-sm cursor-pointer hover:underline" 
+                onClick={handleAuthorClick}
+              >
+                {author.name}
+              </h3>
               <p className="text-xs text-muted-foreground">@{author.username}</p>
             </div>
             {denounced && (
@@ -128,6 +141,14 @@ export function PostCard({
                       disabled={denounced}
                     >
                       Excluir
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      onClick={(e) => { e.stopPropagation(); onHidePost?.() }}
+                      className="flex items-center"
+                    >
+                      <EyeOff className="h-4 w-4 mr-2" />
+                      Ocultar este post
                     </DropdownMenuItem>
                   </>
                 ) : (
@@ -230,7 +251,7 @@ export function PostCard({
             <Button
               variant="ghost"
               size="sm"
-              onClick={onComment}
+              onClick={() => navigate(`/post/${id}`)}
               className="flex items-center space-x-1 hover:text-blue-500"
             >
               <MessageCircle className="h-4 w-4" />
