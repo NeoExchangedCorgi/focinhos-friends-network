@@ -21,6 +21,7 @@ interface AuthContextType {
   updateProfile: (updates: Partial<User>) => void
   updatePassword: (newPassword: string) => void
   resetPassword: (email: string, newPassword: string) => boolean
+  getRegisteredUsers: () => User[]
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -95,6 +96,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return false
   }
 
+  const getRegisteredUsers = (): User[] => {
+    const allUsers = JSON.parse(localStorage.getItem("pata-amiga-all-users") || "[]")
+    return allUsers
+  }
+
   const isAuthenticated = !!user
 
   return (
@@ -105,7 +111,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       logout, 
       updateProfile, 
       updatePassword, 
-      resetPassword 
+      resetPassword,
+      getRegisteredUsers 
     }}>
       {children}
     </AuthContext.Provider>
