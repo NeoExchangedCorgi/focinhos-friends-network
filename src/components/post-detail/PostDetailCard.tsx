@@ -17,6 +17,8 @@ interface PostDetailCardProps {
 }
 
 export function PostDetailCard({ post, isLiked, onLike, canLike }: PostDetailCardProps) {
+  const isPostDenounced = post.denouncedBy.length > 0
+
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -32,7 +34,7 @@ export function PostDetailCard({ post, isLiked, onLike, canLike }: PostDetailCar
               </Link>
               <p className="text-xs text-muted-foreground">@{post.author.username}</p>
             </div>
-            {post.isDenounced && (
+            {isPostDenounced && (
               <Badge variant="destructive" className="ml-2">
                 Denunciado
               </Badge>

@@ -25,7 +25,7 @@ export function CommentsList({ comments, user, postId, isPostDenounced, onToggle
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const [editingComment, setEditingComment] = useState<Comment | null>(null)
   const [editContent, setEditContent] = useState("")
-  const { editComment, deleteComment } = usePosts()
+  const { editComment, deleteComment, adminDeleteComment } = usePosts()
 
   const handleEditClick = (comment: Comment) => {
     if (!isPostDenounced) {
@@ -46,7 +46,11 @@ export function CommentsList({ comments, user, postId, isPostDenounced, onToggle
 
   const handleDelete = (commentId: string) => {
     if (!isPostDenounced) {
-      deleteComment(commentId)
+      if (user?.isAdmin) {
+        adminDeleteComment(commentId)
+      } else {
+        deleteComment(commentId)
+      }
     }
   }
 
@@ -67,6 +71,7 @@ export function CommentsList({ comments, user, postId, isPostDenounced, onToggle
     <>
       {comments.map((comment) => {
         const isCommentOwner = user?.username === comment.author.username
+        const canDeleteComment = isCommentOwner || user?.isAdmin
         return (
           <Card key={comment.id}>
             <CardContent className="p-4">
@@ -90,16 +95,18 @@ export function CommentsList({ comments, user, postId, isPostDenounced, onToggle
                         {formatDistanceToNow(comment.createdAt, { addSuffix: true, locale: ptBR })}
                       </span>
                     </div>
-                    {isCommentOwner && !isPostDenounced && (
+                    {canDeleteComment && !isPostDenounced && (
                       <div className="flex items-center space-x-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEditClick(comment)}
-                          className="h-6 px-2"
-                        >
-                          <Edit className="h-3 w-3" />
-                        </Button>
+                        {isCommentOwner && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleEditClick(comment)}
+                            className="h-6 px-2"
+                          >
+                            <Edit className="h-3 w-3" />
+                          </Button>
+                        )}
                         <Button
                           variant="ghost"
                           size="sm"

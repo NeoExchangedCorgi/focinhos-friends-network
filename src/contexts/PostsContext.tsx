@@ -1,3 +1,4 @@
+
 import { createContext, useContext, ReactNode } from "react"
 import { Post, Comment, Notification } from "@/types/posts"
 import { usePostsState } from "@/hooks/usePosts"
@@ -39,6 +40,7 @@ interface PostsContextType {
   hasUnreadNotifications: (userId: string) => boolean
   adminDeletePost: (postId: string) => void
   adminDeleteUser: (username: string) => void
+  adminDeleteComment: (commentId: string) => void
   hiddenPosts: Record<string, string[]>
   hiddenProfiles: Record<string, string[]>
   visitHistory: Record<string, string[]>
@@ -176,6 +178,20 @@ export function PostsProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const adminDeleteComment = (commentId: string) => {
+    console.log("Admin deleting comment:", commentId)
+    const comment = commentsState.comments.find(c => c.id === commentId)
+    if (!comment) return
+
+    commentsState.deleteComment(commentId)
+    
+    // Update post comment count
+    const post = postsState.getPostById(comment.postId)
+    if (post) {
+      postsState.updatePost(comment.postId, { comments: Math.max(0, post.comments - 1) })
+    }
+  }
+
   const editPost = (postId: string, content: string, images: string[] = [], video?: string, location?: string) => {
     const post = postsState.getPostById(postId)
     if (!post) return
@@ -197,9 +213,9 @@ export function PostsProvider({ children }: { children: ReactNode }) {
       const userHiddenPosts = userState.getHiddenPosts(userId)
       const userHiddenProfiles = userState.getHiddenProfiles(userId)
       
-      // For denounced filter, show all denounced posts (including hidden ones)
+      // For denounced filter, show ALL denounced posts regardless of who denounced them
       if (filter === 'denounced') {
-        return filteredPosts.filter(post => post.denouncedBy.includes(userId))
+        return filteredPosts.filter(post => post.denouncedBy.length > 0)
       }
 
       filteredPosts = filterVisiblePosts(postsState.posts, userId, userHiddenPosts, userHiddenProfiles)
@@ -280,6 +296,7 @@ export function PostsProvider({ children }: { children: ReactNode }) {
       hasUnreadNotifications: notificationsState.hasUnreadNotifications,
       adminDeletePost,
       adminDeleteUser,
+      adminDeleteComment,
       hiddenPosts: userState.hiddenPosts,
       hiddenProfiles: userState.hiddenProfiles,
       visitHistory: userState.visitHistory
