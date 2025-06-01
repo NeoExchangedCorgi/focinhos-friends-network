@@ -9,15 +9,59 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Link, useSearchParams } from "react-router-dom"
 import { UserPlus } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
 
 export default function Home() {
   const { isAuthenticated, user } = useAuth()
-  const { getFilteredPosts, toggleLike, toggleDenounce, hidePost, hideProfile, addToHistory, adminDeletePost } = usePosts()
+  const { 
+    getFilteredPosts, 
+    toggleLike, 
+    toggleDenounce, 
+    hidePost, 
+    hideProfile, 
+    addToHistory, 
+    adminDeletePost,
+    addPost 
+  } = usePosts()
   const [searchParams, setSearchParams] = useSearchParams()
   const currentTab = searchParams.get('tab') || 'recent'
+  const { toast } = useToast()
 
   const handleTabChange = (value: string) => {
     setSearchParams({ tab: value })
+  }
+
+  const handleCreatePost = (data: {
+    content: string
+    images: File[]
+    video?: File
+    location?: string
+  }) => {
+    if (!user) return
+
+    // Convert files to URLs for display (in a real app, you'd upload to a server)
+    const imageUrls = data.images.map(file => URL.createObjectURL(file))
+    const videoUrl = data.video ? URL.createObjectURL(data.video) : undefined
+
+    const postData = {
+      author: {
+        name: user.name,
+        username: user.username,
+        avatar: user.avatar,
+        isAdmin: user.isAdmin
+      },
+      content: data.content,
+      images: imageUrls,
+      video: videoUrl,
+      location: data.location
+    }
+
+    addPost(postData)
+    
+    toast({
+      title: "Post publicado!",
+      description: "Seu post foi publicado com sucesso.",
+    })
   }
 
   if (!isAuthenticated) {
@@ -64,7 +108,11 @@ export default function Home() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <CreatePost />
+      <CreatePost 
+        userName={user?.name}
+        userAvatar={user?.avatar}
+        onSubmit={handleCreatePost}
+      />
       
       <Tabs value={currentTab} onValueChange={handleTabChange} className="w-full">
         <TabsList className="grid w-full grid-cols-3">

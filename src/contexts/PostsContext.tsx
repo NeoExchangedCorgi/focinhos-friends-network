@@ -51,6 +51,7 @@ export function PostsProvider({ children }: { children: ReactNode }) {
   const userState = useUserState()
 
   const toggleLike = (postId: string, userId: string) => {
+    console.log("Toggling like for post:", postId, "user:", userId)
     const post = postsState.getPostById(postId)
     if (!post) return
 
@@ -90,6 +91,7 @@ export function PostsProvider({ children }: { children: ReactNode }) {
   }
 
   const toggleDenounce = (postId: string, userId: string) => {
+    console.log("Toggling denounce for post:", postId, "user:", userId)
     const post = postsState.getPostById(postId)
     if (!post) return
 
@@ -106,6 +108,7 @@ export function PostsProvider({ children }: { children: ReactNode }) {
   }
 
   const addComment = (postId: string, content: string, author: { name: string; username: string; avatar?: string }) => {
+    console.log("Adding comment to post:", postId, "content:", content)
     const newComment = commentsState.addComment(postId, content, author)
     
     // Update post comment count
@@ -126,6 +129,7 @@ export function PostsProvider({ children }: { children: ReactNode }) {
   }
 
   const getFilteredPosts = (filter: 'recent' | 'liked' | 'denounced', userId?: string) => {
+    console.log("Getting filtered posts:", filter, "for user:", userId)
     let filteredPosts = postsState.posts
 
     if (userId) {
@@ -162,12 +166,14 @@ export function PostsProvider({ children }: { children: ReactNode }) {
   }
 
   const adminDeletePost = (postId: string) => {
+    console.log("Admin deleting post:", postId)
     postsState.deletePost(postId)
     commentsState.deleteCommentsByPostId(postId)
     notificationsState.deleteNotificationsByPostId(postId)
   }
 
   const adminDeleteUser = (username: string) => {
+    console.log("Admin deleting user:", username)
     // Remove all posts by the user
     postsState.setPosts(prev => prev.filter(post => post.author.username !== username))
     

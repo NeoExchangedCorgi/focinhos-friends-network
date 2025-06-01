@@ -7,6 +7,7 @@ export const usePostsState = () => {
   const [posts, setPosts] = useState<Post[]>([])
 
   const addPost = (postData: Omit<Post, 'id' | 'createdAt' | 'likes' | 'comments' | 'likedBy' | 'denouncedBy'>) => {
+    console.log("Adding new post:", postData)
     const newPost: Post = {
       ...postData,
       id: createPostId(),
@@ -16,14 +17,21 @@ export const usePostsState = () => {
       likedBy: [],
       denouncedBy: []
     }
-    setPosts(prev => [newPost, ...prev])
+    console.log("Created post object:", newPost)
+    setPosts(prev => {
+      const updated = [newPost, ...prev]
+      console.log("Updated posts array:", updated)
+      return updated
+    })
   }
 
   const deletePost = (postId: string) => {
+    console.log("Deleting post:", postId)
     setPosts(prev => prev.filter(post => post.id !== postId))
   }
 
   const updatePost = (postId: string, updates: Partial<Post>) => {
+    console.log("Updating post:", postId, "with:", updates)
     setPosts(prev => prev.map(post => 
       post.id === postId ? { ...post, ...updates } : post
     ))
