@@ -1,4 +1,5 @@
 
+import { useState } from "react"
 import { Header } from "./Header"
 import { Sidebar } from "./Sidebar"
 import { MobileNav } from "./MobileNav"
@@ -8,9 +9,15 @@ interface LayoutProps {
 }
 
 export function Layout({ children }: LayoutProps) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  const handleMenuClick = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen)
+  }
+
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <Header onMenuClick={handleMenuClick} />
       <div className="flex">
         <Sidebar />
         <main className="flex-1 md:ml-64">
