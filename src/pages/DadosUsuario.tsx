@@ -5,19 +5,29 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useToast } from "@/hooks/use-toast"
 import { Link } from "react-router-dom"
-import { User, UserPlus, Save, ArrowLeft } from "lucide-react"
-import { useState } from "react"
+import { User, UserPlus, Save, ArrowLeft, Upload } from "lucide-react"
+import { useState, useRef } from "react"
 
 export default function DadosUsuario() {
-  const { isAuthenticated, user } = useAuth()
+  const { isAuthenticated, user, updateProfile, updatePassword } = useAuth()
+  const { toast } = useToast()
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  
   const [formData, setFormData] = useState({
     name: user?.name || "",
     username: user?.username || "",
     email: user?.email || "",
-    phone: "",
-    bio: ""
+    phone: user?.phone || "",
+    bio: user?.bio || "",
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: ""
   })
+
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
 
   if (!isAuthenticated) {
     return (
@@ -53,9 +63,61 @@ export default function DadosUsuario() {
     )
   }
 
+  const handleAvatarUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      setIsUploadingAvatar(true)
+      
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const avatarUrl = e.target?.result as string
+        updateProfile({ avatar: avatarUrl })
+        setIsUploadingAvatar(false)
+        toast({
+          title: "Foto atualizada",
+          description: "Sua foto de perfil foi atualizada com sucesso!",
+        })
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("Dados atualizados:", formData)
+    
+    // Update profile information
+    updateProfile({
+      name: formData.name,
+      username: formData.username,
+      email: formData.email,
+      phone: formData.phone,
+      bio: formData.bio
+    })
+
+    // Update password if provided
+    if (formData.newPassword) {
+      if (formData.newPassword !== formData.confirmPassword) {
+        toast({
+          title: "Erro",
+          description: "As senhas não coincidem.",
+          variant: "destructive",
+        })
+        return
+      }
+      
+      updatePassword(formData.newPassword)
+      setFormData(prev => ({ 
+        ...prev, 
+        currentPassword: "", 
+        newPassword: "", 
+        confirmPassword: "" 
+      }))
+    }
+
+    toast({
+      title: "Perfil atualizado",
+      description: "Suas informações foram salvas com sucesso!",
+    })
   }
 
   return (
@@ -70,6 +132,42 @@ export default function DadosUsuario() {
         <h1 className="text-2xl font-bold text-primary">Dados do Usuário</h1>
       </div>
       
+      <Card>
+        <CardHeader>
+          <CardTitle>Foto de Perfil</CardTitle>
+          <CardDescription>
+            Clique na foto para alterá-la
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex justify-center">
+            <div className="relative">
+              <Avatar className="h-24 w-24 cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+                <AvatarImage src={user?.avatar} alt={user?.name} />
+                <AvatarFallback className="text-lg">
+                  {user?.name?.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <Button
+                size="icon"
+                className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploadingAvatar}
+              >
+                <Upload className="h-4 w-4" />
+              </Button>
+              <Input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarUpload}
+                className="hidden"
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle>Informações Pessoais</CardTitle>
@@ -130,6 +228,32 @@ export default function DadosUsuario() {
                 placeholder="Fale um pouco sobre você..."
                 rows={3}
               />
+            </div>
+
+            <div className="border-t pt-4">
+              <h3 className="font-semibold mb-4">Alterar Senha</h3>
+              
+              <div className="space-y-2">
+                <Label htmlFor="newPassword">Nova Senha</Label>
+                <Input
+                  id="newPassword"
+                  type="password"
+                  value={formData.newPassword}
+                  onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
+                  placeholder="Nova senha (opcional)"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirmar Nova Senha</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={formData.confirmPassword}
+                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                  placeholder="Confirme a nova senha"
+                />
+              </div>
             </div>
 
             <Button type="submit" className="w-full">

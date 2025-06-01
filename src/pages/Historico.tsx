@@ -9,7 +9,7 @@ import { Clock, UserPlus } from "lucide-react"
 
 export default function Historico() {
   const { isAuthenticated, user } = useAuth()
-  const { getVisitedPosts, toggleLike, toggleDenounce, hidePost, hideProfile, addToHistory } = usePosts()
+  const { getVisitedPosts, toggleLike, toggleDenounce, hidePost, hideProfile, addToHistory, adminDeletePost } = usePosts()
 
   if (!isAuthenticated) {
     return (
@@ -75,12 +75,16 @@ export default function Historico() {
             <PostCard
               key={post.id}
               {...post}
+              isLiked={post.likedBy.includes(user?.id || "")}
+              isDenounced={post.denouncedBy.includes(user?.id || "")}
               isOwner={user?.username === post.author.username}
+              currentUserIsAdmin={user?.isAdmin}
               onLike={() => user && toggleLike(post.id, user.id)}
               onDenounce={() => user && toggleDenounce(post.id, user.id)}
               onHidePost={() => user && hidePost(post.id, user.id)}
               onHideProfile={() => user && hideProfile(post.author.username, user.id)}
               onVisit={() => user && addToHistory(post.id, user.id)}
+              onAdminDelete={() => user?.isAdmin && adminDeletePost(post.id)}
             />
           ))}
         </div>

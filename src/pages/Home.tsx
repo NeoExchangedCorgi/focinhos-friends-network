@@ -1,68 +1,71 @@
 
 import { useState } from "react"
-import { useSearchParams } from "react-router-dom"
-import { CreatePost } from "@/components/posts/CreatePost"
-import { PostCard } from "@/components/posts/PostCard"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ArrowUp } from "lucide-react"
 import { useAuth } from "@/contexts/AuthContext"
 import { usePosts } from "@/contexts/PostsContext"
-import { Link } from "react-router-dom"
+import { PostCard } from "@/components/posts/PostCard"
+import { CreatePost } from "@/components/posts/CreatePost"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Link, useSearchParams } from "react-router-dom"
+import { UserPlus } from "lucide-react"
 
 export default function Home() {
-  const [showScrollTop, setShowScrollTop] = useState(false)
-  const [searchParams, setSearchParams] = useSearchParams()
   const { isAuthenticated, user } = useAuth()
-  const { addPost, getFilteredPosts, toggleLike, toggleDenounce, hidePost, hideProfile, addToHistory } = usePosts()
-  
+  const { getFilteredPosts, toggleLike, toggleDenounce, hidePost, hideProfile, addToHistory, adminDeletePost } = usePosts()
+  const [searchParams, setSearchParams] = useSearchParams()
   const currentTab = searchParams.get('tab') || 'recent'
-
-  // Handle scroll to show/hide scroll to top button
-  const handleScroll = () => {
-    setShowScrollTop(window.scrollY > 300)
-  }
-
-  // Scroll to top function
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
-
-  // Add scroll listener
-  window.addEventListener('scroll', handleScroll)
-
-  const handleCreatePost = (data: any) => {
-    if (user) {
-      addPost({
-        author: {
-          name: user.name,
-          username: user.username,
-          avatar: user.avatar
-        },
-        content: data.content,
-        images: data.images,
-        video: data.video,
-        location: data.location
-      })
-    }
-  }
 
   const handleTabChange = (value: string) => {
     setSearchParams({ tab: value })
   }
 
-  const posts = getFilteredPosts(currentTab as 'recent' | 'liked' | 'denounced', user?.username)
+  if (!isAuthenticated) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <Card>
+          <CardHeader className="text-center">
+            <img 
+              src="/lovable-uploads/08029b4e-197d-40aa-b9fe-5167c0af94a9.png"
+              alt="Paraíso dos Focinhos"
+              className="h-24 w-24 mx-auto mb-4 object-contain"
+            />
+            <CardTitle className="text-2xl">Bem-vindo ao Pata Amiga</CardTitle>
+            <CardDescription>
+              A rede social dedicada aos amantes dos animais
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
+            <p className="text-muted-foreground">
+              Para ver e interagir com as postagens, você precisa estar logado na plataforma.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button asChild>
+                <Link to="/login">
+                  Fazer Login
+                </Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link to="/cadastro">
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Criar Conta
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  const recentPosts = getFilteredPosts('recent', user?.id)
+  const likedPosts = getFilteredPosts('liked', user?.id)
+  const denouncedPosts = getFilteredPosts('denounced', user?.id)
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      {isAuthenticated && (
-        <CreatePost
-          userName={user?.name || "Usuário"}
-          onSubmit={handleCreatePost}
-        />
-      )}
-
+      <CreatePost />
+      
       <Tabs value={currentTab} onValueChange={handleTabChange} className="w-full">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="recent">Mais Recentes</TabsTrigger>
@@ -71,118 +74,92 @@ export default function Home() {
         </TabsList>
         
         <TabsContent value="recent" className="space-y-4">
-          <h2 className="text-2xl font-bold text-primary">Feed - Mais Recentes</h2>
-          {posts.length === 0 ? (
+          {recentPosts.length === 0 ? (
             <Card>
               <CardContent className="text-center py-12">
-                <h3 className="text-lg font-semibold mb-2">Bem-vindo ao Pata Amiga!</h3>
-                <p className="text-muted-foreground mb-4">
-                  Esta é uma rede social para relatar casos de animais em situação crítica.
-                  {!isAuthenticated && " Faça login ou cadastre-se para começar a interagir."}
+                <p className="text-muted-foreground">
+                  Nenhuma postagem encontrada. Seja o primeiro a postar!
                 </p>
-                {!isAuthenticated ? (
-                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                    <Button asChild>
-                      <Link to="/login">
-                        Fazer Login
-                      </Link>
-                    </Button>
-                    <Button variant="outline" asChild>
-                      <Link to="/cadastro">
-                        Criar Conta
-                      </Link>
-                    </Button>
-                  </div>
-                ) : (
-                  <Button asChild>
-                    <Link to="/nova-postagem">
-                      Criar Primeira Postagem
-                    </Link>
-                  </Button>
-                )}
               </CardContent>
             </Card>
           ) : (
-            posts.map((post) => (
+            recentPosts.map((post) => (
               <PostCard
                 key={post.id}
                 {...post}
+                isLiked={post.likedBy.includes(user?.id || "")}
+                isDenounced={post.denouncedBy.includes(user?.id || "")}
                 isOwner={user?.username === post.author.username}
-                onLike={() => user && toggleLike(post.id, user.username)}
-                onDenounce={() => user && toggleDenounce(post.id, user.username)}
-                onHidePost={() => user && hidePost(post.id, user.username)}
-                onHideProfile={() => user && hideProfile(post.author.username, user.username)}
-                onVisit={() => user && addToHistory(post.id, user.username)}
+                currentUserIsAdmin={user?.isAdmin}
+                onLike={() => user && toggleLike(post.id, user.id)}
+                onDenounce={() => user && toggleDenounce(post.id, user.id)}
+                onHidePost={() => user && hidePost(post.id, user.id)}
+                onHideProfile={() => user && hideProfile(post.author.username, user.id)}
+                onVisit={() => user && addToHistory(post.id, user.id)}
+                onAdminDelete={() => user?.isAdmin && adminDeletePost(post.id)}
               />
             ))
           )}
         </TabsContent>
-
+        
         <TabsContent value="liked" className="space-y-4">
-          <h2 className="text-2xl font-bold text-primary">Feed - Mais Curtidos</h2>
-          {posts.length === 0 ? (
+          {likedPosts.length === 0 ? (
             <Card>
               <CardContent className="text-center py-12">
-                <h3 className="text-lg font-semibold mb-2">Nenhuma postagem encontrada</h3>
-                <p className="text-muted-foreground mb-4">
-                  Os posts mais curtidos aparecerão aqui.
+                <p className="text-muted-foreground">
+                  Nenhuma postagem com muitas curtidas ainda.
                 </p>
               </CardContent>
             </Card>
           ) : (
-            posts.map((post) => (
+            likedPosts.map((post) => (
               <PostCard
                 key={post.id}
                 {...post}
+                isLiked={post.likedBy.includes(user?.id || "")}
+                isDenounced={post.denouncedBy.includes(user?.id || "")}
                 isOwner={user?.username === post.author.username}
-                onLike={() => user && toggleLike(post.id, user.username)}
-                onDenounce={() => user && toggleDenounce(post.id, user.username)}
-                onHidePost={() => user && hidePost(post.id, user.username)}
-                onHideProfile={() => user && hideProfile(post.author.username, user.username)}
-                onVisit={() => user && addToHistory(post.id, user.username)}
+                currentUserIsAdmin={user?.isAdmin}
+                onLike={() => user && toggleLike(post.id, user.id)}
+                onDenounce={() => user && toggleDenounce(post.id, user.id)}
+                onHidePost={() => user && hidePost(post.id, user.id)}
+                onHideProfile={() => user && hideProfile(post.author.username, user.id)}
+                onVisit={() => user && addToHistory(post.id, user.id)}
+                onAdminDelete={() => user?.isAdmin && adminDeletePost(post.id)}
               />
             ))
           )}
         </TabsContent>
-
+        
         <TabsContent value="denounced" className="space-y-4">
-          <h2 className="text-2xl font-bold text-primary">Posts Denunciados</h2>
-          {posts.length === 0 ? (
+          {denouncedPosts.length === 0 ? (
             <Card>
               <CardContent className="text-center py-12">
-                <h3 className="text-lg font-semibold mb-2">Nenhuma postagem denunciada</h3>
-                <p className="text-muted-foreground mb-4">
-                  Posts que você denunciou aparecerão aqui.
+                <p className="text-muted-foreground">
+                  Você não denunciou nenhuma postagem.
                 </p>
               </CardContent>
             </Card>
           ) : (
-            posts.map((post) => (
+            denouncedPosts.map((post) => (
               <PostCard
                 key={post.id}
                 {...post}
+                isLiked={post.likedBy.includes(user?.id || "")}
+                isDenounced={post.denouncedBy.includes(user?.id || "")}
                 isOwner={user?.username === post.author.username}
-                onLike={() => user && toggleLike(post.id, user.username)}
-                onDenounce={() => user && toggleDenounce(post.id, user.username)}
-                onHidePost={() => user && hidePost(post.id, user.username)}
-                onHideProfile={() => user && hideProfile(post.author.username, user.username)}
-                onVisit={() => user && addToHistory(post.id, user.username)}
+                currentUserIsAdmin={user?.isAdmin}
+                onLike={() => user && toggleLike(post.id, user.id)}
+                onDenounce={() => user && toggleDenounce(post.id, user.id)}
+                onHidePost={() => user && hidePost(post.id, user.id)}
+                onHideProfile={() => user && hideProfile(post.author.username, user.id)}
+                onVisit={() => user && addToHistory(post.id, user.id)}
+                onAdminDelete={() => user?.isAdmin && adminDeletePost(post.id)}
               />
             ))
           )}
         </TabsContent>
       </Tabs>
-
-      {/* Scroll to top button */}
-      {showScrollTop && (
-        <Button
-          onClick={scrollToTop}
-          className="fixed bottom-20 right-4 md:bottom-6 md:right-6 rounded-full h-12 w-12 shadow-lg z-40"
-          size="icon"
-        >
-          <ArrowUp className="h-5 w-5" />
-        </Button>
-      )}
     </div>
   )
 }

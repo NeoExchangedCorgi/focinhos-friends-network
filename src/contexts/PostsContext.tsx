@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, ReactNode } from "react"
 
 export interface Comment {
@@ -72,6 +71,8 @@ interface PostsContextType {
   getUnreadNotifications: (userId: string) => Notification[]
   markNotificationAsRead: (notificationId: string) => void
   hasUnreadNotifications: (userId: string) => boolean
+  adminDeletePost: (postId: string) => void
+  adminDeleteUser: (username: string) => void
   hiddenPosts: Record<string, string[]>
   hiddenProfiles: Record<string, string[]>
   visitHistory: Record<string, string[]>
@@ -147,6 +148,11 @@ export function PostsProvider({ children }: { children: ReactNode }) {
             : [...post.likedBy, userId],
           likes: isLiked ? post.likes - 1 : post.likes + 1,
           isLiked: !isLiked
+        }
+
+        // Add to history when liking
+        if (!isLiked) {
+          addToHistory(postId, userId)
         }
 
         // Create notification for post author if liked
@@ -239,6 +245,40 @@ export function PostsProvider({ children }: { children: ReactNode }) {
       ...prev,
       [userId]: [...(prev[userId] || []).filter(id => id !== postId), postId]
     }))
+  }
+
+  const adminDeletePost = (postId: string) => {
+    setPosts(prev => prev.filter(post => post.id !== postId))
+    setComments(prev => prev.filter(comment => comment.postId !== postId))
+    setNotifications(prev => prev.filter(notification => notification.postId !== postId))
+  }
+
+  const adminDeleteUser = (username: string) => {
+    // Remove all posts by the user
+    setPosts(prev => prev.filter(post => post.author.username !== username))
+    
+    // Remove all comments by the user
+    setComments(prev => prev.filter(comment => comment.author.username !== username))
+    
+    // Remove all notifications related to the user
+    setNotifications(prev => prev.filter(notification => 
+      notification.fromUser.username !== username && notification.toUserId !== username
+    ))
+    
+    // Remove user from hidden profiles and visit history
+    setHiddenProfiles(prev => {
+      const updated = { ...prev }
+      Object.keys(updated).forEach(userId => {
+        updated[userId] = updated[userId].filter(u => u !== username)
+      })
+      return updated
+    })
+    
+    setVisitHistory(prev => {
+      const updated = { ...prev }
+      delete updated[username]
+      return updated
+    })
   }
 
   const getFilteredPosts = (filter: 'recent' | 'liked' | 'denounced', userId?: string) => {
@@ -345,6 +385,8 @@ export function PostsProvider({ children }: { children: ReactNode }) {
       getUnreadNotifications,
       markNotificationAsRead,
       hasUnreadNotifications,
+      adminDeletePost,
+      adminDeleteUser,
       hiddenPosts,
       hiddenProfiles,
       visitHistory

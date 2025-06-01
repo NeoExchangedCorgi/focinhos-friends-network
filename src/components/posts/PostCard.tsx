@@ -1,20 +1,11 @@
 
 import { useState } from "react"
-import { Heart, MessageCircle, Flag, MoreHorizontal, MapPin, EyeOff, UserX } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { formatDistanceToNow } from "date-fns"
-import { ptBR } from "date-fns/locale"
-import { Link, useNavigate } from "react-router-dom"
+import { MapPin } from "lucide-react"
+import { useNavigate } from "react-router-dom"
+import { PostCardHeader } from "./PostCardHeader"
+import { PostCardActions } from "./PostCardActions"
+import { PostCardDropdown } from "./PostCardDropdown"
 
 interface PostCardProps {
   id: string
@@ -22,6 +13,7 @@ interface PostCardProps {
     name: string
     username: string
     avatar?: string
+    isAdmin?: boolean
   }
   content: string
   images?: string[]
@@ -33,6 +25,7 @@ interface PostCardProps {
   isLiked?: boolean
   isDenounced?: boolean
   isOwner?: boolean
+  currentUserIsAdmin?: boolean
   onLike?: () => void
   onComment?: () => void
   onDenounce?: () => void
@@ -41,6 +34,7 @@ interface PostCardProps {
   onHidePost?: () => void
   onHideProfile?: () => void
   onVisit?: () => void
+  onAdminDelete?: () => void
 }
 
 export function PostCard({
@@ -56,6 +50,7 @@ export function PostCard({
   isLiked = false,
   isDenounced = false,
   isOwner = false,
+  currentUserIsAdmin = false,
   onLike,
   onComment,
   onDenounce,
@@ -64,6 +59,7 @@ export function PostCard({
   onHidePost,
   onHideProfile,
   onVisit,
+  onAdminDelete,
 }: PostCardProps) {
   const [liked, setLiked] = useState(isLiked)
   const [likeCount, setLikeCount] = useState(likes)
@@ -99,88 +95,29 @@ export function PostCard({
     <Card className="w-full mb-4 hover:shadow-md transition-shadow cursor-pointer" onClick={handleCardClick}>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Avatar className="h-10 w-10 cursor-pointer" onClick={handleAuthorClick}>
-              <AvatarImage src={author.avatar} alt={author.name} />
-              <AvatarFallback>{author.name.charAt(0).toUpperCase()}</AvatarFallback>
-            </Avatar>
-            <div>
-              <h3 
-                className="font-semibold text-sm cursor-pointer hover:underline" 
-                onClick={handleAuthorClick}
-              >
-                {author.name}
-              </h3>
-              <p className="text-xs text-muted-foreground">@{author.username}</p>
-            </div>
-            {denounced && (
-              <Badge variant="destructive" className="ml-2">
-                Denunciado
-              </Badge>
-            )}
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-xs text-muted-foreground">
-              {formatDistanceToNow(createdAt, { addSuffix: true, locale: ptBR })}
-            </span>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-background border">
-                {isOwner ? (
-                  <>
-                    <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit?.() }}>
-                      Editar
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                      onClick={(e) => { e.stopPropagation(); onDelete?.() }}
-                      className="text-destructive"
-                      disabled={denounced}
-                    >
-                      Excluir
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem 
-                      onClick={(e) => { e.stopPropagation(); onHidePost?.() }}
-                      className="flex items-center"
-                    >
-                      <EyeOff className="h-4 w-4 mr-2" />
-                      Ocultar este post
-                    </DropdownMenuItem>
-                  </>
-                ) : (
-                  <>
-                    <DropdownMenuItem 
-                      onClick={(e) => { e.stopPropagation(); onHidePost?.() }}
-                      className="flex items-center"
-                    >
-                      <EyeOff className="h-4 w-4 mr-2" />
-                      Ocultar este post
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem 
-                      onClick={(e) => { e.stopPropagation(); onHideProfile?.() }}
-                      className="flex items-center text-orange-600"
-                    >
-                      <UserX className="h-4 w-4 mr-2" />
-                      Ocultar @{author.username}
-                    </DropdownMenuItem>
-                  </>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          <PostCardHeader 
+            author={author}
+            createdAt={createdAt}
+            isDenounced={denounced}
+            onAuthorClick={handleAuthorClick}
+          />
+          <PostCardDropdown
+            isOwner={isOwner}
+            isAdmin={currentUserIsAdmin}
+            isDenounced={denounced}
+            authorUsername={author.username}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onHidePost={onHidePost}
+            onHideProfile={onHideProfile}
+            onAdminDelete={onAdminDelete}
+          />
         </div>
       </CardHeader>
 
       <CardContent className="py-2">
-        {/* Content */}
         <p className="text-sm mb-3 whitespace-pre-wrap">{content}</p>
 
-        {/* Location */}
         {location && (
           <div className="flex items-center text-xs text-muted-foreground mb-3">
             <MapPin className="h-3 w-3 mr-1" />
@@ -188,7 +125,6 @@ export function PostCard({
           </div>
         )}
 
-        {/* Images */}
         {images.length > 0 && (
           <div className={`grid gap-2 mb-3 ${
             images.length === 1 ? 'grid-cols-1' : 
@@ -220,7 +156,6 @@ export function PostCard({
           </div>
         )}
 
-        {/* Video */}
         {video && (
           <div className="mb-3">
             <video
@@ -233,45 +168,16 @@ export function PostCard({
       </CardContent>
 
       <CardFooter className="pt-2" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between w-full">
-          <div className="flex items-center space-x-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleLike}
-              disabled={isOwner}
-              className={`flex items-center space-x-1 ${
-                liked ? 'text-red-500 hover:text-red-600' : 'hover:text-red-500'
-              }`}
-            >
-              <Heart className={`h-4 w-4 ${liked ? 'fill-current' : ''}`} />
-              <span className="text-xs">{likeCount}</span>
-            </Button>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate(`/post/${id}`)}
-              className="flex items-center space-x-1 hover:text-blue-500"
-            >
-              <MessageCircle className="h-4 w-4" />
-              <span className="text-xs">{comments}</span>
-            </Button>
-          </div>
-
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleDenounce}
-            disabled={isOwner}
-            className={`flex items-center space-x-1 ${
-              denounced ? 'text-red-500 hover:text-red-600' : 'hover:text-orange-500'
-            }`}
-          >
-            <Flag className={`h-4 w-4 ${denounced ? 'fill-current' : ''}`} />
-            <span className="text-xs">{denounced ? 'Denunciado' : 'Denunciar'}</span>
-          </Button>
-        </div>
+        <PostCardActions
+          likes={likeCount}
+          comments={comments}
+          isLiked={liked}
+          isDenounced={denounced}
+          isOwner={isOwner}
+          onLike={handleLike}
+          onComment={() => navigate(`/post/${id}`)}
+          onDenounce={handleDenounce}
+        />
       </CardFooter>
     </Card>
   )

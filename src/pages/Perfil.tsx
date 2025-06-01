@@ -7,20 +7,22 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
+import { useToast } from "@/hooks/use-toast"
 import { Link } from "react-router-dom"
-import { User, UserPlus, Calendar, Edit, Upload } from "lucide-react"
+import { User, UserPlus, Calendar, Edit, Upload, Shield, Trash2 } from "lucide-react"
 import { useState, useRef } from "react"
 
 export default function Perfil() {
   const { username } = useParams<{ username: string }>()
-  const { isAuthenticated, user } = useAuth()
-  const { posts, toggleLike, toggleDenounce, hidePost, hideProfile, addToHistory } = usePosts()
+  const { isAuthenticated, user, updateProfile } = useAuth()
+  const { posts, toggleLike, toggleDenounce, hidePost, hideProfile, addToHistory, adminDeletePost, adminDeleteUser } = usePosts()
+  const { toast } = useToast()
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Se não há username na URL, é o perfil do usuário logado
   const isOwnProfile = !username || (user && username === user.username)
-  const profileUser = isOwnProfile ? user : { username, name: username, avatar: undefined }
+  const profileUser = isOwnProfile ? user : { username, name: username, avatar: undefined, isAdmin: false }
 
   if (!isAuthenticated) {
     return (
@@ -65,13 +67,30 @@ export default function Perfil() {
 
   const handleAvatarUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
-    if (file && user) {
+    if (file && user && isOwnProfile) {
       setIsUploadingAvatar(true)
-      // Simulate upload process
-      setTimeout(() => {
-        // In a real app, you would upload to a server and update the user context
+      
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const avatarUrl = e.target?.result as string
+        updateProfile({ avatar: avatarUrl })
         setIsUploadingAvatar(false)
-      }, 1000)
+        toast({
+          title: "Foto atualizada",
+          description: "Sua foto de perfil foi atualizada com sucesso!",
+        })
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleDeleteUser = () => {
+    if (user?.isAdmin && username) {
+      adminDeleteUser(username)
+      toast({
+        title: "Usuário excluído",
+        description: "O usuário e todos os seus dados foram excluídos do sistema.",
+      })
     }
   }
 
@@ -88,7 +107,7 @@ export default function Perfil() {
         <CardHeader>
           <div className="flex items-start gap-4">
             <div className="relative">
-              <Avatar className="h-20 w-20">
+              <Avatar className={`h-20 w-20 ${isOwnProfile ? 'cursor-pointer' : ''}`} onClick={isOwnProfile ? () => fileInputRef.current?.click() : undefined}>
                 <AvatarImage src={profileUser?.avatar} alt={profileUser?.name} />
                 <AvatarFallback className="text-lg">
                   {profileUser?.name?.charAt(0).toUpperCase() || profileUser?.username?.charAt(0).toUpperCase()}
@@ -113,8 +132,11 @@ export default function Perfil() {
               />
             </div>
             <div className="flex-1">
-              <CardTitle className="text-xl">
+              <CardTitle className="text-xl flex items-center gap-2">
                 {profileUser?.name || profileUser?.username}
+                {profileUser?.isAdmin && (
+                  <Shield className="h-5 w-5 text-blue-600 fill-current" title="Administrador" />
+                )}
               </CardTitle>
               <CardDescription className="text-base">
                 @{profileUser?.username}
@@ -130,23 +152,34 @@ export default function Perfil() {
           <div>
             <h3 className="font-semibold mb-2">Bio</h3>
             <p className="text-muted-foreground">
-              {isOwnProfile 
+              {user?.bio || (isOwnProfile 
                 ? "Defensor dos animais na plataforma Pata Amiga."
                 : `Perfil de ${profileUser?.name || profileUser?.username} na plataforma Pata Amiga.`
-              }
+              )}
             </p>
           </div>
           
-          {isOwnProfile && (
-            <div className="flex gap-3">
+          <div className="flex gap-3">
+            {isOwnProfile && (
               <Button asChild>
                 <Link to="/dados-usuario">
                   <Edit className="h-4 w-4 mr-2" />
                   Editar Perfil
                 </Link>
               </Button>
-            </div>
-          )}
+            )}
+            
+            {user?.isAdmin && !isOwnProfile && username && (
+              <Button 
+                variant="destructive" 
+                onClick={handleDeleteUser}
+                className="flex items-center gap-2"
+              >
+                <Trash2 className="h-4 w-4" />
+                Excluir Usuário (Admin)
+              </Button>
+            )}
+          </div>
         </CardContent>
       </Card>
 
@@ -179,12 +212,16 @@ export default function Perfil() {
                 <PostCard
                   key={post.id}
                   {...post}
+                  isLiked={post.likedBy.includes(user?.id || "")}
+                  isDenounced={post.denouncedBy.includes(user?.id || "")}
                   isOwner={user?.username === post.author.username}
-                  onLike={() => user && toggleLike(post.id, user.username)}
-                  onDenounce={() => user && toggleDenounce(post.id, user.username)}
-                  onHidePost={() => user && hidePost(post.id, user.username)}
-                  onHideProfile={() => user && hideProfile(post.author.username, user.username)}
-                  onVisit={() => user && addToHistory(post.id, user.username)}
+                  currentUserIsAdmin={user?.isAdmin}
+                  onLike={() => user && toggleLike(post.id, user.id)}
+                  onDenounce={() => user && toggleDenounce(post.id, user.id)}
+                  onHidePost={() => user && hidePost(post.id, user.id)}
+                  onHideProfile={() => user && hideProfile(post.author.username, user.id)}
+                  onVisit={() => user && addToHistory(post.id, user.id)}
+                  onAdminDelete={() => user?.isAdmin && adminDeletePost(post.id)}
                 />
               ))}
             </div>
