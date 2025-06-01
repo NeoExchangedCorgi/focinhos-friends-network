@@ -14,7 +14,7 @@ interface PostCardHeaderProps {
   }
   createdAt: Date
   isDenounced: boolean
-  onAuthorClick: () => void
+  onAuthorClick: (e: React.MouseEvent) => void
 }
 
 export function PostCardHeader({ author, createdAt, isDenounced, onAuthorClick }: PostCardHeaderProps) {
@@ -32,7 +32,9 @@ export function PostCardHeader({ author, createdAt, isDenounced, onAuthorClick }
           >
             {author.name}
             {author.isAdmin && (
-              <Shield className="h-4 w-4 text-blue-600 fill-current" title="Administrador" />
+              <span title="Administrador">
+                <Shield className="h-4 w-4 text-blue-600 fill-current" />
+              </span>
             )}
           </h3>
         </div>

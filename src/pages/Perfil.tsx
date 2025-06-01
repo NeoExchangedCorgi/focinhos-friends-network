@@ -135,7 +135,9 @@ export default function Perfil() {
               <CardTitle className="text-xl flex items-center gap-2">
                 {profileUser?.name || profileUser?.username}
                 {profileUser?.isAdmin && (
-                  <Shield className="h-5 w-5 text-blue-600 fill-current" title="Administrador" />
+                  <span title="Administrador">
+                    <Shield className="h-5 w-5 text-blue-600 fill-current" />
+                  </span>
                 )}
               </CardTitle>
               <CardDescription className="text-base">
