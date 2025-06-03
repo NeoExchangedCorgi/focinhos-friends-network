@@ -1,5 +1,5 @@
 
-import { Bell, Menu, User } from "lucide-react"
+import { Bell, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -28,15 +28,6 @@ export function Header({ onMenuClick }: HeaderProps) {
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center justify-between px-4">
         <div className="flex items-center space-x-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="md:hidden"
-            onClick={onMenuClick}
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
-          
           <Link to="/" className="flex items-center space-x-2">
             <img 
               src="/lovable-uploads/08029b4e-197d-40aa-b9fe-5167c0af94a9.png"

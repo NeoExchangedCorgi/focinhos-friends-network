@@ -1,13 +1,11 @@
 
-import { Home, TrendingUp, Flag, Plus, User } from "lucide-react"
+import { Home, Plus, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Link, useLocation } from "react-router-dom"
 import { cn } from "@/lib/utils"
 
 const mobileNavItems = [
   { icon: Home, label: "Home", href: "/" },
-  { icon: TrendingUp, label: "Popular", href: "/mais-curtidos" },
-  { icon: Flag, label: "Denúncias", href: "/denunciados" },
   { icon: Plus, label: "Postar", href: "/nova-postagem" },
   { icon: User, label: "Perfil", href: "/perfil" },
 ]

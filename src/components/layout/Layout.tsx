@@ -21,7 +21,7 @@ export function Layout({ children }: LayoutProps) {
       <div className="flex">
         <Sidebar />
         <main className="flex-1 md:ml-64">
-          <div className="container mx-auto px-4 py-6 pb-20 md:pb-6">
+          <div className="container mx-auto px-2 md:px-4 py-6 pb-20 md:pb-6">
             {children}
           </div>
         </main>
