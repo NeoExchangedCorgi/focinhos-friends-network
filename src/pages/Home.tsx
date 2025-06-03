@@ -72,9 +72,9 @@ export default function Home() {
             <img 
               src="/lovable-uploads/08029b4e-197d-40aa-b9fe-5167c0af94a9.png"
               alt="Paraíso dos Focinhos"
-              className="h-24 w-24 mx-auto mb-4 object-contain"
+              className="h-32 w-32 mx-auto mb-6 object-contain"
             />
-            <CardTitle className="text-2xl">Bem-vindo ao Pata Amiga</CardTitle>
+            <CardTitle className="text-3xl mb-2">Bem-vindo ao Pata Amiga</CardTitle>
             <CardDescription>
               A rede social dedicada aos amantes dos animais
             </CardDescription>

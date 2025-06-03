@@ -63,13 +63,6 @@ export default function Login() {
 
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <img 
-              src={theme === "light" ? "/lovable-uploads/08029b4e-197d-40aa-b9fe-5167c0af94a9.png" : "/lovable-uploads/60e68882-6ee2-4ed6-8618-1abcd3ab462b.png"}
-              alt="Paraíso dos Focinhos"
-              className="h-20 w-20"
-            />
-          </div>
           <CardTitle className="text-2xl font-bold text-primary">Login - Pata Amiga</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">

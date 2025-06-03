@@ -41,9 +41,9 @@ export function Header({ onMenuClick }: HeaderProps) {
             <img 
               src="/lovable-uploads/08029b4e-197d-40aa-b9fe-5167c0af94a9.png"
               alt="Pata Amiga"
-              className="h-8 w-8 object-contain"
+              className="h-10 w-10 object-contain"
             />
-            <span className="hidden font-bold sm:inline-block">
+            <span className="hidden font-bold text-lg sm:inline-block">
               Pata Amiga
             </span>
           </Link>
