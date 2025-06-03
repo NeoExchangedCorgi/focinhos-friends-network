@@ -66,7 +66,7 @@ export default function Home() {
 
   if (!isAuthenticated) {
     return (
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto px-2">
         <Card>
           <CardHeader className="text-center">
             <img 
@@ -107,7 +107,7 @@ export default function Home() {
   const denouncedPosts = getFilteredPosts('denounced', user?.id)
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-2xl mx-auto space-y-6 px-1 md:px-0">
       <CreatePost 
         userName={user?.name}
         userAvatar={user?.avatar}
@@ -115,10 +115,10 @@ export default function Home() {
       />
       
       <Tabs value={currentTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="recent">Mais Recentes</TabsTrigger>
-          <TabsTrigger value="liked">Mais Curtidos</TabsTrigger>
-          <TabsTrigger value="denounced">Denunciados</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-3 text-xs md:text-sm">
+          <TabsTrigger value="recent" className="px-2">Recentes</TabsTrigger>
+          <TabsTrigger value="liked" className="px-2">Curtidos</TabsTrigger>
+          <TabsTrigger value="denounced" className="px-2">Denunciados</TabsTrigger>
         </TabsList>
         
         <TabsContent value="recent" className="space-y-4">

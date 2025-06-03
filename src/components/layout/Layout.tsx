@@ -20,8 +20,8 @@ export function Layout({ children }: LayoutProps) {
       <Header onMenuClick={handleMenuClick} />
       <div className="flex">
         <Sidebar />
-        <main className="flex-1 md:ml-64">
-          <div className="container mx-auto px-2 md:px-4 py-6 pb-20 md:pb-6">
+        <main className="flex-1 md:ml-64 min-w-0">
+          <div className="container mx-auto px-1 md:px-4 py-6 pb-20 md:pb-6 max-w-full">
             {children}
           </div>
         </main>

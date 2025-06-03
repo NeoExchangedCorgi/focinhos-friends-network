@@ -1,5 +1,5 @@
 
-import { Bell, User } from "lucide-react"
+import { Bell, User, Moon, Sun } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "@/contexts/AuthContext"
 import { usePosts } from "@/contexts/PostsContext"
 import { SearchBar } from "./SearchBar"
+import { useTheme } from "@/components/ui/theme-provider"
 
 interface HeaderProps {
   onMenuClick: () => void
@@ -15,6 +16,7 @@ interface HeaderProps {
 export function Header({ onMenuClick }: HeaderProps) {
   const { isAuthenticated, user, logout } = useAuth()
   const { hasUnreadNotifications } = usePosts()
+  const { theme, setTheme } = useTheme()
   const navigate = useNavigate()
 
   const handleLogout = () => {
@@ -22,12 +24,16 @@ export function Header({ onMenuClick }: HeaderProps) {
     navigate("/")
   }
 
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light")
+  }
+
   const unreadCount = user ? hasUnreadNotifications(user.id) : false
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center justify-between px-4">
-        <div className="flex items-center space-x-4">
+      <div className="container flex h-14 items-center justify-between px-2 md:px-4">
+        <div className="flex items-center space-x-2 md:space-x-4">
           <Link to="/" className="flex items-center space-x-2">
             <img 
               src="/lovable-uploads/08029b4e-197d-40aa-b9fe-5167c0af94a9.png"
@@ -41,12 +47,12 @@ export function Header({ onMenuClick }: HeaderProps) {
         </div>
 
         {isAuthenticated && (
-          <div className="flex-1 mx-4">
+          <div className="flex-1 mx-2 md:mx-4 max-w-md">
             <SearchBar />
           </div>
         )}
 
-        <nav className="flex items-center space-x-2">
+        <nav className="flex items-center space-x-1 md:space-x-2">
           {isAuthenticated ? (
             <>
               <Button variant="ghost" size="icon" asChild className="relative">
@@ -63,7 +69,8 @@ export function Header({ onMenuClick }: HeaderProps) {
                 </Link>
               </Button>
               
-              <Button variant="ghost" size="icon" asChild>
+              {/* Profile icon only on desktop */}
+              <Button variant="ghost" size="icon" asChild className="hidden md:flex">
                 <Link to="/perfil">
                   <Avatar className="h-6 w-6">
                     <AvatarImage src={user?.avatar} alt={user?.name} />
@@ -73,17 +80,31 @@ export function Header({ onMenuClick }: HeaderProps) {
                   </Avatar>
                 </Link>
               </Button>
+
+              {/* Dark mode toggle - visible on mobile, hidden on desktop */}
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={toggleTheme}
+                className="md:hidden"
+              >
+                {theme === "light" ? (
+                  <Moon className="h-5 w-5" />
+                ) : (
+                  <Sun className="h-5 w-5" />
+                )}
+              </Button>
               
-              <Button variant="ghost" onClick={handleLogout}>
+              <Button variant="ghost" onClick={handleLogout} className="hidden md:inline-flex">
                 Sair
               </Button>
             </>
           ) : (
             <>
-              <Button variant="ghost" asChild>
+              <Button variant="ghost" asChild className="text-sm px-2 md:px-4">
                 <Link to="/login">Login</Link>
               </Button>
-              <Button asChild>
+              <Button asChild className="text-sm px-2 md:px-4">
                 <Link to="/cadastro">Cadastro</Link>
               </Button>
             </>

@@ -16,7 +16,7 @@ export default function NovaPostagem() {
 
   if (!isAuthenticated) {
     return (
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto px-2">
         <Card>
           <CardHeader className="text-center">
             <Plus className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
@@ -85,7 +85,7 @@ export default function NovaPostagem() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-2xl mx-auto space-y-6 px-1 md:px-0">
       <div className="flex items-center gap-3">
         <Plus className="h-6 w-6 text-primary" />
         <h1 className="text-2xl font-bold text-primary">Nova Postagem</h1>
