@@ -1,32 +1,33 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { BookOpen, Play, Users, Shield } from "lucide-react"
+import { BookOpen, Users, UserCheck, ExternalLink } from "lucide-react"
 
 export default function Tutorial() {
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center gap-3">
+    <div className="max-w-4xl mx-auto space-y-6 px-1 md:px-0">
+      <div className="flex items-center gap-3 mb-8">
         <BookOpen className="h-6 w-6 text-primary" />
         <h1 className="text-2xl font-bold text-primary">Tutorial</h1>
       </div>
-      
-      <div className="grid md:grid-cols-2 gap-6">
+
+      <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
-              <Users className="h-8 w-8 text-blue-600" />
+              <Users className="h-6 w-6 text-blue-500" />
               <div>
-                <CardTitle className="text-xl">Para Usuários Comuns</CardTitle>
+                <CardTitle>Para Usuários Comuns</CardTitle>
                 <CardDescription>
-                  Aprenda como usar o Pata Amiga como usuário comum
+                  Aprenda como usar a plataforma para relatar e acompanhar casos de animais
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-muted-foreground">
-              Este vídeo ensina como criar postagens, curtir, comentar e navegar pelo sistema como usuário comum.
+            <p className="text-sm text-muted-foreground">
+              Este vídeo tutorial ensina como navegar pela plataforma, criar postagens, 
+              curtir e comentar em posts, e usar todas as funcionalidades disponíveis.
             </p>
             <Button asChild className="w-full">
               <a 
@@ -35,8 +36,8 @@ export default function Tutorial() {
                 rel="noopener noreferrer"
                 className="flex items-center gap-2"
               >
-                <Play className="h-4 w-4" />
-                Assistir Tutorial de Usuário
+                <ExternalLink className="h-4 w-4" />
+                Assistir Tutorial
               </a>
             </Button>
           </CardContent>
@@ -45,28 +46,29 @@ export default function Tutorial() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-3">
-              <Shield className="h-8 w-8 text-red-600" />
+              <UserCheck className="h-6 w-6 text-green-500" />
               <div>
-                <CardTitle className="text-xl">Para Administradores</CardTitle>
+                <CardTitle>Para Administradores</CardTitle>
                 <CardDescription>
-                  Aprenda como moderar e administrar a plataforma
+                  Funcionalidades administrativas e gerenciamento da plataforma
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-muted-foreground">
-              Este vídeo ensina as funcionalidades administrativas, como moderar posts, gerenciar usuários e utilizar as ferramentas de administração.
+            <p className="text-sm text-muted-foreground">
+              Tutorial específico para administradores, mostrando como gerenciar 
+              usuários, moderar conteúdo e utilizar ferramentas administrativas.
             </p>
-            <Button asChild className="w-full" variant="destructive">
+            <Button asChild className="w-full">
               <a 
                 href="https://youtu.be/Br8e0nolYK4" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center gap-2"
               >
-                <Play className="h-4 w-4" />
-                Assistir Tutorial de Admin
+                <ExternalLink className="h-4 w-4" />
+                Assistir Tutorial
               </a>
             </Button>
           </CardContent>
@@ -75,16 +77,27 @@ export default function Tutorial() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Dicas Gerais</CardTitle>
+          <CardTitle>Dicas Importantes</CardTitle>
         </CardHeader>
-        <CardContent>
-          <ul className="space-y-2 text-muted-foreground">
-            <li>• Use localização para ajudar outros usuários a encontrarem casos próximos</li>
-            <li>• Adicione fotos claras para melhor visibilidade dos casos</li>
-            <li>• Seja respeitoso nos comentários e interações</li>
-            <li>• Denuncie conteúdo inadequado para manter a comunidade segura</li>
-            <li>• Use o histórico para acompanhar casos que você visitou</li>
-          </ul>
+        <CardContent className="space-y-3">
+          <div className="flex items-start gap-3">
+            <div className="w-2 h-2 bg-primary rounded-full mt-2"></div>
+            <p className="text-sm">
+              <strong>Relatórios:</strong> Sempre inclua fotos e localização precisa nos casos de animais em situação crítica.
+            </p>
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="w-2 h-2 bg-primary rounded-full mt-2"></div>
+            <p className="text-sm">
+              <strong>Privacidade:</strong> Você pode ocultar seu perfil do feed e gerenciar suas postagens.
+            </p>
+          </div>
+          <div className="flex items-start gap-3">
+            <div className="w-2 h-2 bg-primary rounded-full mt-2"></div>
+            <p className="text-sm">
+              <strong>Comunidade:</strong> Use as curtidas e comentários para apoiar outros usuários.
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>

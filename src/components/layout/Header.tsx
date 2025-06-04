@@ -1,5 +1,5 @@
 
-import { Bell, User, Moon, Sun } from "lucide-react"
+import { Bell, User, Moon, Sun, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -8,6 +8,8 @@ import { useAuth } from "@/contexts/AuthContext"
 import { usePosts } from "@/contexts/PostsContext"
 import { SearchBar } from "./SearchBar"
 import { useTheme } from "@/components/ui/theme-provider"
+import { MobileMenu } from "./MobileMenu"
+import { useState } from "react"
 
 interface HeaderProps {
   onMenuClick: () => void
@@ -18,6 +20,7 @@ export function Header({ onMenuClick }: HeaderProps) {
   const { hasUnreadNotifications } = usePosts()
   const { theme, setTheme } = useTheme()
   const navigate = useNavigate()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const handleLogout = () => {
     logout()
@@ -55,20 +58,44 @@ export function Header({ onMenuClick }: HeaderProps) {
         <nav className="flex items-center space-x-1 md:space-x-2">
           {isAuthenticated ? (
             <>
-              <Button variant="ghost" size="icon" asChild className="relative">
+              <Button variant="ghost" size="icon" asChild className={`relative ${unreadCount ? 'animate-pulse' : ''}`}>
                 <Link to="/notificacoes">
                   <Bell className="h-5 w-5" />
                   {unreadCount && (
                     <Badge 
                       variant="destructive" 
-                      className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                      className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs animate-bounce"
                     >
                       •
                     </Badge>
                   )}
                 </Link>
               </Button>
+
+              {/* Mobile buttons */}
+              <div className="flex md:hidden space-x-1">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={toggleTheme}
+                >
+                  {theme === "light" ? (
+                    <Moon className="h-5 w-5" />
+                  ) : (
+                    <Sun className="h-5 w-5" />
+                  )}
+                </Button>
+                
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => setIsMobileMenuOpen(true)}
+                >
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </div>
               
+              {/* Desktop buttons */}
               <Button variant="ghost" size="icon" asChild className="hidden md:flex">
                 <Link to="/perfil">
                   <Avatar className="h-6 w-6">
@@ -105,6 +132,12 @@ export function Header({ onMenuClick }: HeaderProps) {
           )}
         </nav>
       </div>
+
+      <MobileMenu 
+        isOpen={isMobileMenuOpen} 
+        onClose={() => setIsMobileMenuOpen(false)}
+        onLogout={handleLogout}
+      />
     </header>
   )
 }
