@@ -17,10 +17,17 @@ export function SearchBar() {
   useEffect(() => {
     if (searchTerm.trim()) {
       const allUsers = getRegisteredUsers()
-      const results = allUsers.filter(user => 
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.username.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+      console.log("All users:", allUsers) // Debug log
+      console.log("Search term:", searchTerm) // Debug log
+      
+      const results = allUsers.filter(user => {
+        const nameMatch = user.name && user.name.toLowerCase().includes(searchTerm.toLowerCase())
+        const usernameMatch = user.username && user.username.toLowerCase().includes(searchTerm.toLowerCase())
+        console.log(`User ${user.username}: nameMatch=${nameMatch}, usernameMatch=${usernameMatch}`) // Debug log
+        return nameMatch || usernameMatch
+      })
+      
+      console.log("Search results:", results) // Debug log
       setSearchResults(results)
       setShowResults(true)
     } else {
@@ -68,7 +75,7 @@ export function SearchBar() {
               >
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback>{user.name.charAt(0).toUpperCase()}</AvatarFallback>
+                  <AvatarFallback>{user.name && user.name.charAt(0).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{user.name}</p>

@@ -45,8 +45,11 @@ export default function Curtidas() {
     )
   }
 
+  // Filter posts to show only posts from OTHER users that the current user liked
   const likedPosts = posts.filter(post => 
-    user && post.likedBy.includes(user.id) && 
+    user && 
+    post.likedBy.includes(user.id) && 
+    post.author.username !== user.username && // Exclude own posts
     !((usePosts().hiddenPosts[user.id] || []).includes(post.id)) &&
     !((usePosts().hiddenProfiles[user.id] || []).includes(post.author.username))
   )
@@ -64,7 +67,7 @@ export default function Curtidas() {
             <Heart className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">Nenhuma postagem curtida</h3>
             <p className="text-muted-foreground mb-4">
-              Quando você curtir postagens, elas aparecerão aqui para fácil acesso.
+              Quando você curtir postagens de outros usuários, elas aparecerão aqui para fácil acesso.
             </p>
             <Button asChild>
               <Link to="/">
