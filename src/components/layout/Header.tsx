@@ -35,15 +35,15 @@ export function Header({ onMenuClick }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between px-2 md:px-4">
-        <div className="flex items-center space-x-3 md:space-x-4 md:ml-64">
-          <Link to="/" className="flex items-center space-x-3">
+      <div className="container flex h-14 items-center justify-between px-2 md:px-4">
+        <div className="flex items-center space-x-2 md:space-x-4">
+          <Link to="/" className="flex items-center space-x-2">
             <img 
               src="/lovable-uploads/08029b4e-197d-40aa-b9fe-5167c0af94a9.png"
               alt="Pata Amiga"
-              className="h-12 w-12 md:h-14 md:w-14 object-contain"
+              className="h-10 w-10 object-contain"
             />
-            <span className="hidden font-bold text-xl md:text-2xl sm:inline-block">
+            <span className="hidden font-bold text-lg sm:inline-block">
               Pata Amiga
             </span>
           </Link>
