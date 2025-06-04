@@ -69,7 +69,6 @@ export function Header({ onMenuClick }: HeaderProps) {
                 </Link>
               </Button>
               
-              {/* Profile icon only on desktop */}
               <Button variant="ghost" size="icon" asChild className="hidden md:flex">
                 <Link to="/perfil">
                   <Avatar className="h-6 w-6">
@@ -81,22 +80,17 @@ export function Header({ onMenuClick }: HeaderProps) {
                 </Link>
               </Button>
 
-              {/* Dark mode toggle - visible on mobile, hidden on desktop */}
               <Button 
                 variant="ghost" 
                 size="icon" 
                 onClick={toggleTheme}
-                className="md:hidden"
+                className="hidden md:inline-flex"
               >
                 {theme === "light" ? (
                   <Moon className="h-5 w-5" />
                 ) : (
                   <Sun className="h-5 w-5" />
                 )}
-              </Button>
-              
-              <Button variant="ghost" onClick={handleLogout} className="hidden md:inline-flex">
-                Sair
               </Button>
             </>
           ) : (

@@ -22,6 +22,7 @@ import DadosUsuario from "./pages/DadosUsuario";
 import NovaPostagem from "./pages/NovaPostagem";
 import Notificacoes from "./pages/Notificacoes";
 import PostDetail from "./pages/PostDetail";
+import Tutorial from "./pages/Tutorial";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -45,6 +46,7 @@ const App = () => (
                 <Route path="/historico" element={<Layout><Historico /></Layout>} />
                 <Route path="/ocultos" element={<Layout><Ocultos /></Layout>} />
                 <Route path="/contato-ong" element={<Layout><ContatoOng /></Layout>} />
+                <Route path="/tutorial" element={<Layout><Tutorial /></Layout>} />
                 <Route path="/perfil" element={<Layout><Perfil /></Layout>} />
                 <Route path="/perfil/:username" element={<Layout><Perfil /></Layout>} />
                 <Route path="/dados-usuario" element={<Layout><DadosUsuario /></Layout>} />

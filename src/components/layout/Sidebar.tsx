@@ -1,5 +1,5 @@
 
-import { Home, Heart, Clock, EyeOff, Phone, LogOut } from "lucide-react"
+import { Home, Heart, Clock, EyeOff, Phone, LogOut, BookOpen } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Link, useLocation } from "react-router-dom"
 import { cn } from "@/lib/utils"
@@ -10,6 +10,7 @@ const navigationItems = [
   { icon: Clock, label: "Histórico", href: "/historico" },
   { icon: EyeOff, label: "Ocultos", href: "/ocultos" },
   { icon: Phone, label: "Contate a ONG", href: "/contato-ong" },
+  { icon: BookOpen, label: "Tutorial", href: "/tutorial" },
 ]
 
 export function Sidebar() {
