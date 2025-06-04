@@ -1,5 +1,5 @@
 
-import { Home, Heart, Clock, EyeOff, Phone, LogOut, BookOpen } from "lucide-react"
+import { Home, Heart, Clock, EyeOff, Phone, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Link, useLocation } from "react-router-dom"
 import { cn } from "@/lib/utils"
@@ -9,7 +9,6 @@ const navigationItems = [
   { icon: Heart, label: "Curtidas", href: "/curtidas" },
   { icon: Clock, label: "Histórico", href: "/historico" },
   { icon: EyeOff, label: "Ocultos", href: "/ocultos" },
-  { icon: BookOpen, label: "Tutorial", href: "/tutorial" },
   { icon: Phone, label: "Contate a ONG", href: "/contato-ong" },
 ]
 

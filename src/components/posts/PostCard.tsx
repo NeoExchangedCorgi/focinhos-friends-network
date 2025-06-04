@@ -66,7 +66,7 @@ export function PostCard({
   const [denounced, setDenounced] = useState(isDenounced)
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const navigate = useNavigate()
-  const { editPost, getPostById, adminDeletePost } = usePosts()
+  const { editPost, getPostById } = usePosts()
 
   const handleLike = () => {
     if (!isOwner && !isDenounced) {
@@ -86,13 +86,6 @@ export function PostCard({
   const handleEdit = () => {
     if (!isDenounced) {
       setEditDialogOpen(true)
-    }
-  }
-
-  const handleDelete = () => {
-    if (isOwner && !isDenounced) {
-      adminDeletePost(id)
-      onDelete?.()
     }
   }
 
@@ -129,7 +122,7 @@ export function PostCard({
               isDenounced={denounced}
               authorUsername={author.username}
               onEdit={handleEdit}
-              onDelete={handleDelete}
+              onDelete={onDelete}
               onHidePost={onHidePost}
               onHideProfile={onHideProfile}
               onAdminDelete={onAdminDelete}

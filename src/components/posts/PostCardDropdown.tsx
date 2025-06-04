@@ -66,13 +66,6 @@ export function PostCardDropdown({
               <EyeOff className="h-4 w-4 mr-2" />
               Ocultar este post
             </DropdownMenuItem>
-            <DropdownMenuItem 
-              onClick={(e) => { e.stopPropagation(); onHideProfile?.() }}
-              className="flex items-center text-orange-600"
-            >
-              <UserX className="h-4 w-4 mr-2" />
-              Ocultar meu perfil
-            </DropdownMenuItem>
           </>
         ) : (
           <>
