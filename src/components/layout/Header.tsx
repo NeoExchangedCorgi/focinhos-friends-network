@@ -38,9 +38,9 @@ export function Header({ onMenuClick }: HeaderProps) {
             <img 
               src="/lovable-uploads/08029b4e-197d-40aa-b9fe-5167c0af94a9.png"
               alt="Pata Amiga"
-              className="h-10 w-10 object-contain"
+              className="h-12 w-12 object-contain"
             />
-            <span className="hidden font-bold text-lg sm:inline-block">
+            <span className="hidden font-bold text-xl sm:inline-block">
               Pata Amiga
             </span>
           </Link>
@@ -81,12 +81,12 @@ export function Header({ onMenuClick }: HeaderProps) {
                 </Link>
               </Button>
 
-              {/* Dark mode toggle - visible on mobile, hidden on desktop */}
+              {/* Dark mode toggle - visible on mobile and on large screens (1920px+) */}
               <Button 
                 variant="ghost" 
                 size="icon" 
                 onClick={toggleTheme}
-                className="md:hidden"
+                className="md:hidden 2xl:flex"
               >
                 {theme === "light" ? (
                   <Moon className="h-5 w-5" />
@@ -95,7 +95,8 @@ export function Header({ onMenuClick }: HeaderProps) {
                 )}
               </Button>
               
-              <Button variant="ghost" onClick={handleLogout} className="hidden md:inline-flex">
+              {/* Logout button - hidden on large screens (1920px+) */}
+              <Button variant="ghost" onClick={handleLogout} className="hidden md:inline-flex 2xl:hidden">
                 Sair
               </Button>
             </>
