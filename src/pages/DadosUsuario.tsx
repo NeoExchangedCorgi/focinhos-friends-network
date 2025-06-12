@@ -7,13 +7,25 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useToast } from "@/hooks/use-toast"
-import { Link } from "react-router-dom"
-import { User, UserPlus, Save, ArrowLeft, Upload } from "lucide-react"
+import { Link, useNavigate } from "react-router-dom"
+import { User, UserPlus, Save, ArrowLeft, Upload, Trash2 } from "lucide-react"
 import { useState, useRef } from "react"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 export default function DadosUsuario() {
-  const { isAuthenticated, user, updateProfile, updatePassword } = useAuth()
+  const { isAuthenticated, user, updateProfile, updatePassword, logout } = useAuth()
   const { toast } = useToast()
+  const navigate = useNavigate()
   const fileInputRef = useRef<HTMLInputElement>(null)
   
   const [formData, setFormData] = useState({
@@ -118,6 +130,17 @@ export default function DadosUsuario() {
       title: "Perfil atualizado",
       description: "Suas informações foram salvas com sucesso!",
     })
+  }
+
+  const handleDeleteAccount = () => {
+    // Simula a exclusão da conta
+    toast({
+      title: "Conta excluída",
+      description: "Sua conta foi excluída permanentemente.",
+      variant: "destructive",
+    })
+    logout()
+    navigate("/")
   }
 
   return (
@@ -261,6 +284,44 @@ export default function DadosUsuario() {
               Salvar Alterações
             </Button>
           </form>
+        </CardContent>
+      </Card>
+
+      <Card className="border-destructive">
+        <CardHeader>
+          <CardTitle className="text-destructive">Zona Perigosa</CardTitle>
+          <CardDescription>
+            Ações irreversíveis que afetarão permanentemente sua conta
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" className="w-full">
+                <Trash2 className="h-4 w-4 mr-2" />
+                Excluir Conta Permanentemente
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Tem certeza absoluta?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Esta ação não pode ser desfeita. Isso excluirá permanentemente sua conta
+                  e removerá todos os seus dados de nossos servidores, incluindo posts, 
+                  comentários e informações pessoais.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction 
+                  onClick={handleDeleteAccount}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Sim, excluir minha conta
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </CardContent>
       </Card>
     </div>

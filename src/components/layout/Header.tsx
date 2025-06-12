@@ -122,6 +122,18 @@ export function Header({ onMenuClick }: HeaderProps) {
             </>
           ) : (
             <>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={toggleTheme}
+                className="mr-2"
+              >
+                {theme === "light" ? (
+                  <Moon className="h-5 w-5" />
+                ) : (
+                  <Sun className="h-5 w-5" />
+                )}
+              </Button>
               <Button variant="ghost" asChild className="text-sm px-2 md:px-4">
                 <Link to="/login">Login</Link>
               </Button>
