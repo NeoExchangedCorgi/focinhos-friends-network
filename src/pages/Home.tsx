@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { useAuth } from "@/contexts/AuthContext"
 import { usePosts } from "@/contexts/PostsContext"
@@ -10,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Link, useSearchParams } from "react-router-dom"
 import { UserPlus } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { useTheme } from "@/components/ui/theme-provider"
 
 export default function Home() {
   const { isAuthenticated, user } = useAuth()
@@ -26,6 +26,7 @@ export default function Home() {
   const [searchParams, setSearchParams] = useSearchParams()
   const currentTab = searchParams.get('tab') || 'recent'
   const { toast } = useToast()
+  const { theme } = useTheme()
 
   const handleTabChange = (value: string) => {
     setSearchParams({ tab: value })
@@ -64,13 +65,18 @@ export default function Home() {
     })
   }
 
+  // Define qual logo usar baseado no tema
+  const logoSrc = theme === "dark" 
+    ? "/lovable-uploads/7230ae44-4cf0-43d7-997c-f1df41f3e3c3.png"
+    : "/lovable-uploads/08029b4e-197d-40aa-b9fe-5167c0af94a9.png"
+
   if (!isAuthenticated) {
     return (
       <div className="max-w-2xl mx-auto px-2">
         <Card>
           <CardHeader className="text-center">
             <img 
-              src="/lovable-uploads/08029b4e-197d-40aa-b9fe-5167c0af94a9.png"
+              src={logoSrc}
               alt="Paraíso dos Focinhos"
               className="h-32 w-32 mx-auto mb-6 object-contain"
             />
