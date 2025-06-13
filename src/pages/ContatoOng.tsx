@@ -1,12 +1,9 @@
-
-import { Phone, Mail, Facebook, Instagram, Clock, Users } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-
+import { Phone, Mail, Facebook, Instagram, Clock, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 export default function ContatoOng() {
-  return (
-    <div className="max-w-4xl mx-auto space-y-6">
+  return <div className="max-w-4xl mx-auto space-y-6">
       <div className="text-center space-y-4">
         <h1 className="text-3xl font-bold text-primary">Paraíso dos Focinhos</h1>
         <p className="text-lg text-muted-foreground">
@@ -115,7 +112,7 @@ export default function ContatoOng() {
             Ajude-nos a proteger e cuidar dos animais em situação de vulnerabilidade. 
             Sua contribuição faz toda a diferença!
           </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center bg-inherit">
             <Button variant="secondary" asChild>
               <a href="https://wa.me/5521976090612" target="_blank" rel="noopener noreferrer">
                 Quero Ajudar
@@ -129,6 +126,5 @@ export default function ContatoOng() {
           </div>
         </CardContent>
       </Card>
-    </div>
-  )
+    </div>;
 }
