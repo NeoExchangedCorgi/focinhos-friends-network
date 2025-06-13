@@ -121,7 +121,7 @@ export default function ContatoOng() {
                 Quero Ajudar
               </a>
             </Button>
-            <Button variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-primary" asChild>
+            <Button variant="secondary" asChild>
               <a href="mailto:contato@paraisodosfocinhos.com.br">
                 Entrar em Contato
               </a>
