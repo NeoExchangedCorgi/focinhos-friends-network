@@ -33,13 +33,18 @@ export function Header({ onMenuClick }: HeaderProps) {
 
   const unreadCount = user ? hasUnreadNotifications(user.id) : false
 
+  // Define qual logo usar baseado no tema
+  const logoSrc = theme === "dark" 
+    ? "/lovable-uploads/7230ae44-4cf0-43d7-997c-f1df41f3e3c3.png"
+    : "/lovable-uploads/08029b4e-197d-40aa-b9fe-5167c0af94a9.png"
+
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center justify-between px-2 md:px-4">
         <div className="flex items-center space-x-2 md:space-x-4">
           <Link to="/" className="flex items-center space-x-2">
             <img 
-              src="/lovable-uploads/08029b4e-197d-40aa-b9fe-5167c0af94a9.png"
+              src={logoSrc}
               alt="Pata Amiga"
               className="h-10 w-10 object-contain"
             />
